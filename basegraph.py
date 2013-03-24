@@ -34,6 +34,3 @@ class BaseProperty(object):
     def __init__(self, lbl='', wgt=[]):
         self.label = lbl
         self.weight = wgt
-
-if __name__ == '__main__':
-    b = BaseGraph()
