@@ -34,6 +34,7 @@ def convert_edge_list(raw_edge_list):
 
     print result_graph
 
+
 def retrieve_information_web(url):
     try:
         res = urllib2.urlopen(url).readlines()
@@ -44,9 +45,6 @@ def retrieve_information_web(url):
 
 def retrieve_information_file():
     pass
-
-
-
 
 
 if __name__ == '__main__':

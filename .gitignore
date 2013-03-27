@@ -1,3 +1,7 @@
 *.pyc
 .ropeproject
 nohup.out
+
+mmi.sublime-project
+
+mmi.sublime-workspace
