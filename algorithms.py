@@ -34,18 +34,24 @@ def iterative_breadth_first_search(graph, node):
 
 def get_coherent_components_count(graph):
     bfs_results = []
+    # workaround to enter the for-loop below
+    bfs_results.append([])
     for node in graph.get_nodes():
+       # print "Node %s: " % node
         bfs_res, is_coherent = is_graph_coherent(graph, node)
         if is_coherent:
+      #      print "BFS result %s valid; breaks loop" % bfs_res
             return 1
 
-        for el in bfs_results:
-            if set(el) != set(bfs_res):
-                bfs_results.append(bfs_res)
+        if all(set(item) != set(bfs_res) for item in bfs_results):
+            bfs_results.append(bfs_res)
+     #       print "New Element: " + str(len(bfs_results))
+        print "Aktuelles result %d\tNode Count %d " % (len(bfs_res), graph.get_node_count())
 
-    return len(bfs_results)
+    return len(bfs_results) - 1
 
 
 def is_graph_coherent(graph, node):
-    iter_bfs_res = iterative_breadth_first_search(graph, node)
+    #iter_bfs_res = iterative_breadth_first_search(graph, node)
+    iter_bfs_res = recursive_depth_first_search(graph, node, [])
     return iter_bfs_res, len(iter_bfs_res) == graph.get_node_count()
