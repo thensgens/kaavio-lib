@@ -30,3 +30,22 @@ def iterative_breadth_first_search(graph, node):
                 queue.append(neighbour)
 
     return visited_nodes
+
+
+def get_coherent_components_count(graph):
+    bfs_results = []
+    for node in graph.get_nodes():
+        bfs_res, is_coherent = is_graph_coherent(graph, node)
+        if is_coherent:
+            return 1
+
+        for el in bfs_results:
+            if set(el) != set(bfs_res):
+                bfs_results.append(bfs_res)
+
+    return len(bfs_results)
+
+
+def is_graph_coherent(graph, node):
+    iter_bfs_res = iterative_breadth_first_search(graph, node)
+    return iter_bfs_res, len(iter_bfs_res) == graph.get_node_count()

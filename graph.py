@@ -45,6 +45,12 @@ class Graph(BaseGraph):
     def get_node_neighbours(self, node):
         return self.__node_adj_list[node]
 
+    def get_nodes(self):
+        return self.__node_adj_list.keys()
+
+    def get_node_count(self):
+        return len(self.__node_adj_list.keys())
+
     def __repr__(self):
         output = []
         for node, neighbours in self.__node_adj_list.items():
