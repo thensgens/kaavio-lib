@@ -1,7 +1,7 @@
 import urllib2
 from graph import Graph
 from basegraph import EdgeProperty
-
+from algorithms import recursive_depth_first_search
 
 def convert_matrix(matrix):
     pass
@@ -33,7 +33,7 @@ def convert_edge_list(edge_list, raw=False):
         res_edge = tuple([int(n) for n in res_edge])
         result_graph.add_edges([res_edge, attr])
 
-    print result_graph
+    return result_graph
 
 
 def retrieve_information_web(url):
@@ -61,4 +61,5 @@ if __name__ == '__main__':
     # Test from file
     input_file = "test_graph.txt"
     result = convert_edge_list(retrieve_information_file(input_file), False)
-    print result
+    trav_order = recursive_depth_first_search(result, 0)
+    print trav_order
