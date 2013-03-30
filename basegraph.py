@@ -34,3 +34,11 @@ class BaseProperty(object):
     def __init__(self, lbl='', wgt=[]):
         self.label = lbl
         self.weight = wgt
+
+
+class NodeProperty(BaseProperty):
+    pass
+
+
+class EdgeProperty(BaseProperty):
+    pass

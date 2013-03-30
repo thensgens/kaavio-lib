@@ -42,6 +42,9 @@ class Graph(BaseGraph):
             new_edge = (edge[1], edge[0])
             self.edge_attr.setdefault(new_edge, []).append(edge_attribute)
 
+    def get_node_neighbours(self, node):
+        return self.__node_adj_list[node]
+
     def __repr__(self):
         output = []
         for node, neighbours in self.__node_adj_list.items():
