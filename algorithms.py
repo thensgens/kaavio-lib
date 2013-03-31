@@ -36,16 +36,19 @@ def get_coherent_components_count(graph):
     bfs_results = []
     # workaround to enter the for-loop below
     bfs_results.append([])
-    for node in graph.get_nodes():
-       # print "Node %s: " % node
-        bfs_res, is_coherent = is_graph_coherent(graph, node)
+    #for node in graph.get_nodes():
+    nodelist = set(graph.get_nodes())
+    while nodelist:
+        #print "Node %s: " % node
+        bfs_res, is_coherent = is_graph_coherent(graph, nodelist.pop())
         if is_coherent:
-      #      print "BFS result %s valid; breaks loop" % bfs_res
+            #print "BFS result %s valid; breaks loop" % bfs_res
             return 1
 
         if all(set(item) != set(bfs_res) for item in bfs_results):
             bfs_results.append(bfs_res)
-     #       print "New Element: " + str(len(bfs_results))
+            nodelist -= set(bfs_res)
+            #print "New Element: " + str(len(bfs_results)-1)
         print "Aktuelles result %d\tNode Count %d " % (len(bfs_res), graph.get_node_count())
 
     return len(bfs_results) - 1
