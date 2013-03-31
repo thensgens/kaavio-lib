@@ -66,7 +66,7 @@ if __name__ == '__main__':
     print "=" * 30
 
     print "Test from web"
-    graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/Graph3.txt'
+    graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/Graph4.txt'
     result = convert_edge_list(retrieve_information_web(graph_url), True)
     """
     print "Rekursive Tiefensuche:"

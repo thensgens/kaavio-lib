@@ -53,5 +53,6 @@ def get_coherent_components_count(graph):
 
 def is_graph_coherent(graph, node):
     #iter_bfs_res = iterative_breadth_first_search(graph, node)
-    iter_bfs_res = recursive_depth_first_search(graph, node, [])
-    return iter_bfs_res, len(iter_bfs_res) == graph.get_node_count()
+    #return iter_bfs_res, len(iter_bfs_res) == graph.get_node_count()
+    recur_bfs_res = recursive_depth_first_search(graph, node, [])
+    return recur_bfs_res, len(recur_bfs_res) == graph.get_node_count()
