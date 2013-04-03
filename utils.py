@@ -1,8 +1,9 @@
-import urllib2
+import urllib2, sys
 from graph import Graph
 from basegraph import EdgeProperty
 from algorithms import recursive_depth_first_search, iterative_breadth_first_search, get_coherent_components_count
 
+# needed e.g. for Graph1.txt
 def convert_matrix(matrix):
     pass
 
@@ -52,15 +53,11 @@ def retrieve_information_file(input):
 
 
 if __name__ == '__main__':
-
     print "Test from file"
     input_file = "test_graph.txt"
     result = convert_edge_list(retrieve_information_file(input_file), False)
-    """
-    print recursive_depth_first_search(result, 0)
-    print "=" * 15
-    print iterative_breadth_first_search(result, 0)
-    """
+    if len(sys.argv) > 1 and sys.argv[1] == 'verbose':
+        print result
     print get_coherent_components_count(result)
 
     print "=" * 30
@@ -68,11 +65,6 @@ if __name__ == '__main__':
     print "Test from web"
     graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/Graph4.txt'
     result = convert_edge_list(retrieve_information_web(graph_url), True)
-    """
-    print "Rekursive Tiefensuche:"
-    print recursive_depth_first_search(result, 0)  
-    print "=" * 15
-    print "Iterative Breitensuche:"
-    print iterative_breadth_first_search(result, 0)
-    """
+    if len(sys.argv) > 1 and sys.argv[1] == 'verbose':
+        print result
     print get_coherent_components_count(result)
