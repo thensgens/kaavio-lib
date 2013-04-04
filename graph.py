@@ -14,6 +14,9 @@ class Graph(BaseGraph):
         self.__node_adj_list = {}
         self.__directed = directed
 
+    def set_graph_directed(self, direction):
+        self.__directed = direction
+
     def add_nodes(self, *nodes):
         for node_tuple in nodes:
             node, node_attribute = node_tuple[0], node_tuple[1]
