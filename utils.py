@@ -1,7 +1,10 @@
 import urllib2
 from graph import Graph
 from basegraph import EdgeProperty
-from algorithms import recursive_depth_first_search, iterative_breadth_first_search, get_coherent_components_count
+from algorithms import (
+        recursive_depth_first_search,
+        iterative_breadth_first_search,
+        get_coherent_components_count)
 
 def convert_matrix(matrix):
     pass
@@ -70,7 +73,7 @@ if __name__ == '__main__':
     result = convert_edge_list(retrieve_information_web(graph_url), True)
     """
     print "Rekursive Tiefensuche:"
-    print recursive_depth_first_search(result, 0)  
+    print recursive_depth_first_search(result, 0)
     print "=" * 15
     print "Iterative Breitensuche:"
     print iterative_breadth_first_search(result, 0)
