@@ -1,6 +1,6 @@
 from basegraph import BaseGraph
 from graph_exceptions import NodeNotInGraph
-
+from algorithms import get_coherent_components_count
 
 class Graph(BaseGraph):
 

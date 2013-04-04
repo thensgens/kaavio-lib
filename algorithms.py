@@ -17,7 +17,7 @@ def iterative_breadth_first_search(graph, node):
     queue = []
     visited_nodes = []
 
-    # push the start node into the queue
+    # push the first node into the queue
     queue.append(node)
 
     while queue:
@@ -33,29 +33,22 @@ def iterative_breadth_first_search(graph, node):
 
 
 def get_coherent_components_count(graph):
-    bfs_results = []
+    trav_results = []
     # workaround to enter the for-loop below
-    bfs_results.append([])
-    #for node in graph.get_nodes():
+    trav_results.append([])
     nodelist = set(graph.get_nodes())
     while nodelist:
-        #print "Node %s: " % node
-        bfs_res, is_coherent = is_graph_coherent(graph, nodelist.pop())
+        trav_result, is_coherent = is_graph_coherent(graph, nodelist.pop())
         if is_coherent:
-            #print "BFS result %s valid; breaks loop" % bfs_res
             return 1
 
-        if all(set(item) != set(bfs_res) for item in bfs_results):
-            bfs_results.append(bfs_res)
-            nodelist -= set(bfs_res)
-            #print "New Element: " + str(len(bfs_results)-1)
-        print "Aktuelles result %d\tNode Count %d " % (len(bfs_res), graph.get_node_count())
+        if all(set(item) != set(trav_result) for item in trav_results):
+            trav_results.append(trav_result)
+            nodelist -= set(trav_result)
 
-    return len(bfs_results) - 1
+    return len(trav_results) - 1
 
 
 def is_graph_coherent(graph, node):
-    #iter_bfs_res = iterative_breadth_first_search(graph, node)
-    #return iter_bfs_res, len(iter_bfs_res) == graph.get_node_count()
-    recur_bfs_res = recursive_depth_first_search(graph, node, [])
-    return recur_bfs_res, len(recur_bfs_res) == graph.get_node_count()
+    trav_result = recursive_depth_first_search(graph, node, [])
+    return trav_result, len(trav_result) == graph.get_node_count()
