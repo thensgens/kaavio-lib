@@ -1,10 +1,9 @@
-import urllib2, sys
+import urllib2
+import sys
 from graph import Graph
 from basegraph import EdgeProperty
-from algorithms import (
-        recursive_depth_first_search,
-        iterative_breadth_first_search,
-        get_coherent_components_count)
+from algorithms import get_coherent_components_count
+
 
 def convert_matrix(matrix):
     """
@@ -28,6 +27,7 @@ def convert_matrix(matrix):
     # reset the graph to undirected
     result_graph.set_graph_directed(False)
     return result_graph
+
 
 # TODO: add error handling for invalid documents
 def convert_edge_list(edge_list):
@@ -91,9 +91,9 @@ if __name__ == '__main__':
     print get_coherent_components_count(result)
 
     # convert from edge list
-    #print "Test from web"
-    #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/Graph1.txt'
-    #result = convert_edge_list(retrieve_information_web(graph_url), True)
-    #if len(sys.argv) > 1 and sys.argv[1] == 'verbose':
-        #print result
-    #print get_coherent_components_count(result)
+    print "Test from web"
+    graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/Graph2.txt'
+    result = convert_edge_list(retrieve_information_web(graph_url))
+    if len(sys.argv) > 1 and sys.argv[1] == 'verbose':
+        print result
+    print get_coherent_components_count(result)
