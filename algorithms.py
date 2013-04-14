@@ -1,6 +1,6 @@
 """
 This module contains several algorithms
-that can be performed on (directed) graphs.
+that can be performed on graphs.
 """
 
 
@@ -19,14 +19,13 @@ def iterative_breadth_first_search(graph, node):
 
     # push the first node into the queue
     queue.append(node)
+    visited_nodes.append(node)
 
     while queue:
         curr_element = queue.pop(0)
-        if curr_element not in visited_nodes:
-            visited_nodes.append(curr_element)
-
         for neighbour in graph.get_node_neighbours(curr_element):
             if neighbour not in visited_nodes:
+                visited_nodes.append(neighbour)
                 queue.append(neighbour)
 
     return visited_nodes
@@ -34,7 +33,7 @@ def iterative_breadth_first_search(graph, node):
 
 def get_coherent_components_count(graph):
     trav_results = []
-    # workaround to enter the for-loop below
+    # insert dummy item to enter the for-loop below
     trav_results.append([])
     nodelist = set(graph.get_nodes())
     while nodelist:
@@ -51,4 +50,26 @@ def get_coherent_components_count(graph):
 
 def is_graph_coherent(graph, node):
     trav_result = recursive_depth_first_search(graph, node, [])
+    #trav_result = iterative_breadth_first_search(graph, node)
     return trav_result, len(trav_result) == graph.get_node_count()
+
+
+def kruskal(graph):
+    attrs  = graph.edge_attr
+    entries = [(float(attrs[edge][0].weight[0]), edge[0], edge[1]) for edge in attrs]
+    entries.sort(cmp_func)
+
+    A = []
+    mengen = []
+    for node in graph.get_nodes():
+        mengen.append(set([node]))
+
+    for edge in entries:
+        if mengen[mengen.index(set([edge[1]]))] != mengen[mengen.index(set([edge[2]]))]:
+           A.append(edge)
+           mengen[mengen.index(set([edge[1]]))] |= mengen[mengen.index(set([edge[2]]))]
+           #mengen.remove(set([edge[2]]))
+
+    print A
+def cmp_func(a, b):
+    return cmp(a[0], b[0])
