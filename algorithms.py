@@ -58,18 +58,35 @@ def kruskal(graph):
     attrs  = graph.edge_attr
     entries = [(float(attrs[edge][0].weight[0]), edge[0], edge[1]) for edge in attrs]
     entries.sort(cmp_func)
+    sets = [[n] for n in graph.get_nodes()]
+    mst = []
+    mst_sum = 0
 
-    A = []
-    mengen = []
-    for node in graph.get_nodes():
-        mengen.append(set([node]))
+    for cheapest in entries:
+        w, u, v = cheapest[0], cheapest[1], cheapest[2]
+        res1, res2 = find_in_set(sets, u), find_in_set(sets, v)
+        if res1 != res2:
+            sets = union(sets, res1, res2)
+            mst.append((w, u, v))
+            mst_sum += w
+            if len(mst) == graph.get_node_count() - 1:
+                break
 
-    for edge in entries:
-        if mengen[mengen.index(set([edge[1]]))] != mengen[mengen.index(set([edge[2]]))]:
-           A.append(edge)
-           mengen[mengen.index(set([edge[1]]))] |= mengen[mengen.index(set([edge[2]]))]
-           #mengen.remove(set([edge[2]]))
+    print mst_sum
 
-    print A
+
+def find_in_set(sets, node):
+    idx = 0
+    for curr_set in sets:
+        if node in curr_set:
+            return (curr_set, idx)
+        idx += 1
+
+
+def union(sets, res1, res2):
+    new_set = [res1[0] + res2[0]] + [b for a, b in enumerate(sets) if a not in [res1[1], res2[1]]]
+    return new_set
+
+
 def cmp_func(a, b):
     return cmp(a[0], b[0])
