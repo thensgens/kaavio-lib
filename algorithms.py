@@ -71,5 +71,32 @@ def kruskal(graph):
            #mengen.remove(set([edge[2]]))
 
     print A
+
+def kruskal_2(graph):
+    attrs  = graph.edge_attr
+    entries = [(float(attrs[edge][0].weight[0]), edge[0], edge[1]) for edge in attrs]
+    entries.sort(cmp_func)
+
+    A = []
+    result = 0
+
+    sets = dict((n, set([n])) for n in graph.get_nodes())
+
+    while entries:
+        edge = entries.pop(0)
+        w, u, v = edge
+
+        if sets[u] != sets[v]:
+            A.append(edge)
+            sets[u].update(sets[v])
+            for ver in sets[u]:
+                sets[ver] = sets[u]
+            result += w
+            if len(A) == graph.get_node_count() - 1:
+                break
+
+    print result
+
+
 def cmp_func(a, b):
     return cmp(a[0], b[0])
