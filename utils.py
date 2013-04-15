@@ -2,7 +2,7 @@ import urllib2
 import sys
 from graph import Graph
 from basegraph import EdgeProperty
-from algorithms import get_coherent_components_count, kruskal
+from algorithms import get_coherent_components_count, kruskal, kruskal_2, prim, prim_wiki
 
 
 def convert_matrix(matrix):
@@ -35,7 +35,7 @@ def convert_edge_list(edge_list):
         Converts the input edge list
         (it's mandatory that all edges are numbers).
     """
-    result_graph = Graph(directed=True)
+    result_graph = Graph()
     parsed_graph = [tuple(entry.strip(' \r\n').split('\t')) for entry in edge_list]
     node_count = int(parsed_graph[0][0])
 
@@ -54,7 +54,7 @@ def convert_edge_list(edge_list):
         res_edge = tuple([int(n) for n in res_edge])
         result_graph.add_edges([res_edge, attr])
 
-    result_graph.set_graph_directed(False)
+    #result_graph.set_graph_directed(False)
     return result_graph
 
 
@@ -107,14 +107,13 @@ def test_praktikum_2():
     print "=" * 30
     print "Kruskal algorithm"
     print "=" * 30
-    graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/G_1_2.txt'
-   #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/G_100_200.txt'
-    graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/G_10_20.txt'
-    #result = convert_edge_list(retrieve_information_file('test_graph_kruskal.txt'))
-    result = convert_edge_list(retrieve_information_web(graph_url))
-    mst_kruskal = kruskal(result)
+    #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/G_1_2.txt'
+    #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/G_10_20.txt'
+    result = convert_edge_list(retrieve_information_file('test_graph_kruskal.txt'))
+    #result = convert_edge_list(retrieve_information_web(graph_url))
+    #mst_kruskal = kruskal_2(result)
 
-
+    mst_prim = prim_wiki(result, result.get_nodes()[0])
 
 if __name__ == '__main__':
     #test_praktikum_1()

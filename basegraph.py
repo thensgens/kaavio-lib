@@ -25,6 +25,9 @@ class BaseGraph(object):
         self.node_attr = {}
         self.edge_attr = {}
 
+    def get_default_weights(self, edge):
+        return self.edge_attr[edge][0].weight
+
 
 class BaseProperty(object):
 
