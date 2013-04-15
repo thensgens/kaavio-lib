@@ -99,6 +99,7 @@ def kruskal_2(graph):
 
     print result
 
+
 def prim_wiki(graph, start_node):
     queue = PriorityQueue()
     parent = {}
@@ -111,10 +112,6 @@ def prim_wiki(graph, start_node):
 
     # put first node in the queue
     queue.add_task(task=start_node, priority=0)
-<<<<<<< HEAD
-=======
-    #parent[start_node] = None
->>>>>>> crapcommit
 
     while queue.not_empty():
         cheapest_node = queue.pop_task()
@@ -123,18 +120,10 @@ def prim_wiki(graph, start_node):
             mst_sum += float(graph.get_default_weights((cheapest_node, parent[cheapest_node]))[0])
         for adj_node in graph.get_node_neighbours(cheapest_node):
             edge_weight = float(graph.get_default_weights((cheapest_node, adj_node))[0])
-<<<<<<< HEAD
-=======
-            print edge_weight
->>>>>>> crapcommit
             if queue.contains_task(adj_node) and edge_weight < queue.get_priority(adj_node):
                 parent[adj_node] = cheapest_node
                 queue.add_task(task=adj_node, priority=edge_weight)
-<<<<<<< HEAD
 
-=======
-        
->>>>>>> crapcommit
     print mst_sum
 
 
