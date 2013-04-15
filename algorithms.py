@@ -77,23 +77,24 @@ def kruskal_2(graph):
     entries = [(float(attrs[edge][0].weight[0]), edge[0], edge[1]) for edge in attrs]
     entries.sort(cmp_func)
 
-    A = []
+    outedges = []
     result = 0
+    edgecount = graph.get_node_count() - 1
+    length = 0
 
     sets = dict((n, set([n])) for n in graph.get_nodes())
 
-    while entries:
+    while length < edgecount:
         edge = entries.pop(0)
         w, u, v = edge
 
         if sets[u] != sets[v]:
-            A.append(edge)
+            outedges.append(edge)
             sets[u].update(sets[v])
             for ver in sets[u]:
                 sets[ver] = sets[u]
             result += w
-            if len(A) == graph.get_node_count() - 1:
-                break
+            length += 1
 
     print result
 

@@ -108,9 +108,9 @@ def test_praktikum_2():
     print "Kruskal algorithm"
     print "=" * 30
     #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/G_1_2.txt'
-    graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/G_100_200.txt'
-    #result = convert_edge_list(retrieve_information_file('test_graph_kruskal.txt'))
-    result = convert_edge_list(retrieve_information_web(graph_url))
+    #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/G_10_20.txt'
+    result = convert_edge_list(retrieve_information_file('test_graph_kruskal.txt'))
+    #result = convert_edge_list(retrieve_information_web(graph_url))
     mst_kruskal = kruskal_2(result)
 
 
