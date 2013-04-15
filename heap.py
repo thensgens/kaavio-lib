@@ -4,7 +4,11 @@ import heapq
 
 class PriorityQueue(object):
 
+<<<<<<< HEAD
     INFINITY = 99999999999.0
+=======
+    INFINITY = 99999
+>>>>>>> crapcommit
 
     def __init__(self):
         self.pq = []

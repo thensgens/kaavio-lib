@@ -10,7 +10,7 @@ def convert_matrix(matrix):
         Converts the input adj. matrix
         (it's mandatory that all edges are numbers).
     """
-    result_graph = Graph(directed=True)
+    result_graph = Graph(directed=False)
     parsed_graph = [tuple(entry.strip(' \r\n').split('\t')) for entry in matrix]
     node_count = int(parsed_graph[0][0])
     # remove first item (first item is the node count)
@@ -25,7 +25,7 @@ def convert_matrix(matrix):
                 result_graph.add_edges([(line_number, column_idx), None])
 
     # reset the graph to undirected
-    result_graph.set_graph_directed(False)
+    #result_graph.set_graph_directed(False)
     return result_graph
 
 
@@ -35,7 +35,7 @@ def convert_edge_list(edge_list):
         Converts the input edge list
         (it's mandatory that all edges are numbers).
     """
-    result_graph = Graph()
+    result_graph = Graph(directed=False)
     parsed_graph = [tuple(entry.strip(' \r\n').split('\t')) for entry in edge_list]
     node_count = int(parsed_graph[0][0])
 
@@ -54,7 +54,7 @@ def convert_edge_list(edge_list):
         res_edge = tuple([int(n) for n in res_edge])
         result_graph.add_edges([res_edge, attr])
 
-    #result_graph.set_graph_directed(False)
+    result_graph.set_graph_directed(False)
     return result_graph
 
 
@@ -111,12 +111,19 @@ def test_praktikum_2():
     graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/G_100_200.txt'
     #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/G_10_20.txt'
     #result = convert_edge_list(retrieve_information_file('test_graph_kruskal.txt'))
+<<<<<<< HEAD
     #result = convert_edge_list(retrieve_information_web(graph_url))
     #mst_kruskal = kruskal_2(result)
 
     #result = convert_edge_list(retrieve_information_file('test_graph_kruskal.txt'))
     result = convert_edge_list(retrieve_information_web(graph_url))
     mst_prim = prim_wiki(result, result.get_nodes()[0])
+=======
+    result = convert_edge_list(retrieve_information_web(graph_url))
+    #mst_kruskal = kruskal_2(result)
+
+    mst_prim = prim_wiki(result, result.get_nodes()[311])
+>>>>>>> crapcommit
 
 if __name__ == '__main__':
     #test_praktikum_1()
