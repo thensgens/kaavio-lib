@@ -110,21 +110,19 @@ def prim_wiki(graph, start_node):
         queue.add_task(task=node, priority=PriorityQueue.INFINITY)
         parent[node] = None
 
-    # change values for the start node
+    # put first node in the queue
     queue.add_task(task=start_node, priority=0)
-    parent[start_node] = None
 
     while queue.not_empty():
         cheapest_node = queue.pop_task()
         if parent[cheapest_node] is not None:
             mst.append((cheapest_node, parent[cheapest_node]))
+            mst_sum += float(graph.get_default_weights((cheapest_node, parent[cheapest_node]))[0])
         for adj_node in graph.get_node_neighbours(cheapest_node):
-            edge_weight = graph.get_default_weights((cheapest_node, adj_node))[0]
+            edge_weight = float(graph.get_default_weights((cheapest_node, adj_node))[0])
             if queue.contains_task(adj_node) and edge_weight < queue.get_priority(adj_node):
                 parent[adj_node] = cheapest_node
-                #queue.remove_task(task=adj_node)
                 queue.add_task(task=adj_node, priority=edge_weight)
-                mst_sum += edge_weight
 
     print mst_sum
 
@@ -136,7 +134,6 @@ def prim(graph, start_node):
     while queue.not_empty():
         cheapest_edge = queue.pop_task()
         update_queue(graph, cheapest_edge, queue)
-
 
 
 def update_queue(graph, node, queue):

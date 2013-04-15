@@ -4,7 +4,7 @@ import heapq
 
 class PriorityQueue(object):
 
-    INFINITY = 999999999999999999999999
+    INFINITY = 99999999999.0
 
     def __init__(self):
         self.pq = []
@@ -20,7 +20,7 @@ class PriorityQueue(object):
             self.remove_task(task)
         count = next(self.counter)
         entry = [priority, count, task]
-        self.entry_finder[task] = entry     # 0 => [10, 1, 0]
+        self.entry_finder[task] = entry
         heapq.heappush(self.pq, entry)
 
     def remove_task(self, task):
@@ -49,8 +49,3 @@ class PriorityQueue(object):
 
     def contains_task(self, task):
         return task in self.entry_finder
-        #try:
-            #entry = self.entry_finder[task]
-            #return True
-        #except:
-            #return False
