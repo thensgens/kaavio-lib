@@ -58,25 +58,7 @@ def is_graph_coherent(graph, node):
 def kruskal(graph):
     attrs  = graph.edge_attr
     entries = [(float(attrs[edge][0].weight[0]), edge[0], edge[1]) for edge in attrs]
-    entries.sort(cmp_func)
-
-    A = []
-    mengen = []
-    for node in graph.get_nodes():
-        mengen.append(set([node]))
-
-    for edge in entries:
-        if mengen[mengen.index(set([edge[1]]))] != mengen[mengen.index(set([edge[2]]))]:
-           A.append(edge)
-           mengen[mengen.index(set([edge[1]]))] |= mengen[mengen.index(set([edge[2]]))]
-           #mengen.remove(set([edge[2]]))
-
-    print A
-
-def kruskal_2(graph):
-    attrs  = graph.edge_attr
-    entries = [(float(attrs[edge][0].weight[0]), edge[0], edge[1]) for edge in attrs]
-    entries.sort(cmp_func)
+    entries.sort(lambda a, b: cmp(a[0], b[0]))
 
     outedges = []
     result = 0
@@ -100,7 +82,7 @@ def kruskal_2(graph):
     print result
 
 
-def prim_wiki(graph, start_node):
+def prim(graph, start_node):
     queue = PriorityQueue()
     parent = {}
     mst = []
@@ -126,22 +108,3 @@ def prim_wiki(graph, start_node):
 
     print mst_sum
 
-
-def prim(graph, start_node):
-    queue = PriorityQueue()
-    update_queue(graph, start_node, queue)
-
-    while queue.not_empty():
-        cheapest_edge = queue.pop_task()
-        update_queue(graph, cheapest_edge, queue)
-
-
-def update_queue(graph, node, queue):
-    adj_nodes = graph.get_node_neighbours(node)
-    for adj_node in adj_nodes:
-        prio = graph.edge_attr[(node, adj_node)][0].weight[0]
-        queue.add_task(task=(node, adj_node), priority=prio)
-
-
-def cmp_func(a, b):
-    return cmp(a[0], b[0])

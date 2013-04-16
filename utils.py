@@ -2,8 +2,6 @@ import urllib2
 import sys
 from graph import Graph
 from basegraph import EdgeProperty
-from algorithms import get_coherent_components_count, kruskal, kruskal_2, prim, prim_wiki
-
 
 def convert_matrix(matrix):
     """
@@ -57,67 +55,3 @@ def convert_edge_list(edge_list):
     #result_graph.set_graph_directed(False)
     return result_graph
 
-
-def retrieve_information_web(url):
-    try:
-        res = urllib2.urlopen(url).readlines()
-    except:
-        res = []
-    return res
-
-
-def retrieve_information_file(input):
-    res = []
-    with open(input, "r") as f:
-        res = f.readlines()
-    return res
-
-
-def test_praktikum_1():
-    print "=" * 30
-    print 'Test from file'
-    input_file = 'test_graph.txt'
-    result = convert_edge_list(retrieve_information_file(input_file))
-    if len(sys.argv) > 1 and sys.argv[1] == 'verbose':
-        print result
-    print get_coherent_components_count(result)
-
-    print "=" * 30
-
-    # convert from adj. matrix
-    print 'Test from web'
-    graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/Graph1.txt'
-    result = convert_matrix(retrieve_information_web(graph_url))
-    if len(sys.argv) > 1 and sys.argv[1] == 'verbose':
-        print result
-    print get_coherent_components_count(result)
-
-    print "=" * 30
-
-    # convert from edge list
-    print "Test from web"
-    graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/Graph4.txt'
-    result = convert_edge_list(retrieve_information_web(graph_url))
-    if len(sys.argv) > 1 and sys.argv[1] == 'verbose':
-        print result
-    print get_coherent_components_count(result)
-    print "=" * 30
-
-
-def test_praktikum_2():
-    print "=" * 30
-    print "Kruskal algorithm"
-    print "=" * 30
-    graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/G_100_200.txt'
-    #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/G_10_20.txt'
-    #result = convert_edge_list(retrieve_information_file('test_graph_kruskal.txt'))
-    #result = convert_edge_list(retrieve_information_web(graph_url))
-    #mst_kruskal = kruskal_2(result)
-
-    #result = convert_edge_list(retrieve_information_file('test_graph_kruskal.txt'))
-    result = convert_edge_list(retrieve_information_web(graph_url))
-    mst_prim = prim_wiki(result, result.get_nodes()[0])
-
-if __name__ == '__main__':
-    #test_praktikum_1()
-    test_praktikum_2()

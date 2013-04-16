@@ -3,3 +3,4 @@ nohup.out
 *.pyc
 *.ropeproject
 mmi.*
+tags

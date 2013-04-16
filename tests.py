@@ -1,0 +1,74 @@
+import os
+import sys
+from algorithms import get_coherent_components_count, kruskal, prim
+from utils import convert_matrix, convert_edge_list
+from io import retrieve_information_web, retrieve_information_file
+
+
+def test_praktikum_1():
+    print "=" * 30
+    print 'Test from file'
+    input_file = 'test_graph.txt'
+    result = convert_edge_list(retrieve_information_file(input_file))
+    if len(sys.argv) > 1 and sys.argv[1] == 'verbose':
+        print result
+    print get_coherent_components_count(result)
+
+    print "=" * 30
+
+    # convert from adj. matrix
+    print 'Test from web'
+    graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/Graph1.txt'
+    result = convert_matrix(retrieve_information_web(graph_url))
+    if len(sys.argv) > 1 and sys.argv[1] == 'verbose':
+        print result
+    print get_coherent_components_count(result)
+
+    print "=" * 30
+
+    # convert from edge list
+    print "Test from web"
+    graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/Graph4.txt'
+    result = convert_edge_list(retrieve_information_web(graph_url))
+    if len(sys.argv) > 1 and sys.argv[1] == 'verbose':
+        print result
+    print get_coherent_components_count(result)
+    print "=" * 30
+
+
+def test_praktikum_2(arg):
+    """
+        Reading and converting the graphs (web/file).
+    """
+    #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/G_10_20.txt'
+    input_file = 'graphs/G_10_200.txt'
+    result = convert_edge_list(retrieve_information_file(input_file))
+    #result = convert_edge_list(retrieve_information_web(graph_url))
+
+    if arg == 'kruskal':
+        """
+            Tests for Kruskal
+        """
+        print "=" * 30
+        print "Kruskal algorithm"
+        print "=" * 30
+        mst_kruskal = kruskal(result)
+    elif arg == 'prim':
+        """
+            Tests for Prim
+        """
+        print "=" * 30
+        print "Prim algorithm"
+        print "=" * 30
+        mst_prim = prim(result, result.get_nodes()[0])
+
+
+if __name__ == '__main__':
+    try:
+        arg = sys.argv[1]
+    except:
+        arg = None
+
+    #test_praktikum_1()
+    test_praktikum_2(arg)
+
