@@ -73,8 +73,10 @@ def kruskal(graph):
 
         if sets[u] != sets[v]:
             outedges.append(edge)
+            # union
             sets[u].update(sets[v])
             for ver in sets[u]:
+                # set references to the specific union
                 sets[ver] = sets[u]
             result += w
             length += 1
