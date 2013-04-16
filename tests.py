@@ -64,6 +64,9 @@ def test_praktikum_2(arg):
 
 
 if __name__ == '__main__':
+    """
+        param arg contains the specified algorithm, e.g. 'kruskal'
+    """
     try:
         arg = sys.argv[1]
     except:
