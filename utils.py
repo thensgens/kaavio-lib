@@ -54,4 +54,3 @@ def convert_edge_list(edge_list):
 
     #result_graph.set_graph_directed(False)
     return result_graph
-

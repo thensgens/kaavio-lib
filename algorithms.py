@@ -110,3 +110,22 @@ def prim(graph, start_node):
 
     print mst_sum
 
+def nearest_neighbor(graph, node):
+    current_node = node
+    visited_nodes = [node]
+    tour_weight = 0
+    weights = []
+
+    while len(visited_nodes) < graph.get_node_count():
+        neighbours = set(graph.get_node_neighbours(current_node))
+        for adj_node in neighbours.difference(visited_nodes):
+            temp_weight = float(graph.get_default_weights((current_node, adj_node))[0])
+            weights.append((temp_weight,(current_node, adj_node)))
+        minedge = min(weights)
+        tour_weight += minedge[0]
+        current_node = minedge[1][1]
+        visited_nodes.append(current_node)
+        weights = []
+
+    print visited_nodes
+    print tour_weight
