@@ -121,6 +121,7 @@ def nearest_neighbor(graph, node):
 
     while len(visited_nodes) < graph.get_node_count():
         neighbours = set(graph.get_node_neighbours(current_node))
+        # all unvisited adjacent nodes
         for adj_node in neighbours.difference(visited_nodes):
             temp_weight = float(graph.get_default_weights((current_node, adj_node))[0])
             weights.append((temp_weight,(current_node, adj_node)))
@@ -130,9 +131,8 @@ def nearest_neighbor(graph, node):
         visited_nodes.append(current_node)
         weights = []
 
+    # add the last weight (weighted edge to the starting node)
     temp_weight = float(graph.get_default_weights((node, current_node))[0])
-
-
 
     print visited_nodes
     print tour_weight + temp_weight
@@ -142,7 +142,7 @@ def double_tree(graph):
     index = 0
     tour_weight = 0
 
-    mst_graph = make_graph_from_mst(mst, graph)   
+    mst_graph = make_graph_from_mst(mst, graph)
     res_tour = recursive_depth_first_search(mst_graph, mst_graph.get_nodes()[0])
 
     while index < len(res_tour)-1:
@@ -154,7 +154,4 @@ def double_tree(graph):
 
     print tour_weight + temp_weight
     print res_tour
-
-
-
 
