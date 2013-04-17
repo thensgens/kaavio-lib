@@ -4,6 +4,7 @@ that can be performed on graphs.
 """
 
 from heap import PriorityQueue
+from utils import make_graph_from_mst
 
 def recursive_depth_first_search(graph, node, visited_nodes=[]):
     visited_nodes.append(node)
@@ -100,15 +101,17 @@ def prim(graph, start_node):
     while queue.not_empty():
         cheapest_node = queue.pop_task()
         if parent[cheapest_node] is not None:
-            mst.append((cheapest_node, parent[cheapest_node]))
-            mst_sum += float(graph.get_default_weights((cheapest_node, parent[cheapest_node]))[0])
+            temp_weight = float(graph.get_default_weights((cheapest_node, parent[cheapest_node]))[0])
+            mst.append((temp_weight,(cheapest_node, parent[cheapest_node])))
+            mst_sum += temp_weight
         for adj_node in graph.get_node_neighbours(cheapest_node):
             edge_weight = float(graph.get_default_weights((cheapest_node, adj_node))[0])
             if queue.contains_task(adj_node) and edge_weight < queue.get_priority(adj_node):
                 parent[adj_node] = cheapest_node
                 queue.add_task(task=adj_node, priority=edge_weight)
 
-    print mst_sum
+    print "Prim Weight: ", mst_sum
+    return mst
 
 def nearest_neighbor(graph, node):
     current_node = node
@@ -127,5 +130,31 @@ def nearest_neighbor(graph, node):
         visited_nodes.append(current_node)
         weights = []
 
+    temp_weight = float(graph.get_default_weights((node, current_node))[0])
+
+
+
     print visited_nodes
-    print tour_weight
+    print tour_weight + temp_weight
+
+def double_tree(graph):
+    mst = prim(graph, graph.get_nodes()[0])
+    index = 0
+    tour_weight = 0
+
+    mst_graph = make_graph_from_mst(mst, graph)   
+    res_tour = recursive_depth_first_search(mst_graph, mst_graph.get_nodes()[0])
+
+    while index < len(res_tour)-1:
+        temp_weight = float(graph.get_default_weights((res_tour[index], res_tour[index+1]))[0])
+        tour_weight += temp_weight
+        index += 1
+
+    temp_weight = float(graph.get_default_weights((res_tour[-1], res_tour[0]))[0])
+
+    print tour_weight + temp_weight
+    print res_tour
+
+
+
+
