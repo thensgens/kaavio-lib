@@ -6,6 +6,7 @@ that can be performed on graphs.
 from heap import PriorityQueue
 from utils import make_graph_from_mst
 
+
 def recursive_depth_first_search(graph, node, visited_nodes=[]):
     visited_nodes.append(node)
     for each in graph.get_node_neighbours(node):
@@ -57,7 +58,7 @@ def is_graph_coherent(graph, node):
 
 
 def kruskal(graph):
-    attrs  = graph.edge_attr
+    attrs = graph.edge_attr
     entries = [(float(attrs[edge][0].weight[0]), edge[0], edge[1]) for edge in attrs]
     entries.sort(lambda a, b: cmp(a[0], b[0]))
 
@@ -102,7 +103,7 @@ def prim(graph, start_node):
         cheapest_node = queue.pop_task()
         if parent[cheapest_node] is not None:
             temp_weight = float(graph.get_default_weights((cheapest_node, parent[cheapest_node]))[0])
-            mst.append((temp_weight,(cheapest_node, parent[cheapest_node])))
+            mst.append((temp_weight, (cheapest_node, parent[cheapest_node])))
             mst_sum += temp_weight
         for adj_node in graph.get_node_neighbours(cheapest_node):
             edge_weight = float(graph.get_default_weights((cheapest_node, adj_node))[0])
@@ -112,6 +113,7 @@ def prim(graph, start_node):
 
     print "Prim Weight: ", mst_sum
     return mst
+
 
 def nearest_neighbor(graph, node):
     current_node = node
@@ -124,7 +126,7 @@ def nearest_neighbor(graph, node):
         # all unvisited adjacent nodes
         for adj_node in neighbours.difference(visited_nodes):
             temp_weight = float(graph.get_default_weights((current_node, adj_node))[0])
-            weights.append((temp_weight,(current_node, adj_node)))
+            weights.append((temp_weight, (current_node, adj_node)))
         minedge = min(weights)
         tour_weight += minedge[0]
         current_node = minedge[1][1]
@@ -137,6 +139,7 @@ def nearest_neighbor(graph, node):
     print visited_nodes
     print tour_weight + temp_weight
 
+
 def double_tree(graph):
     mst = prim(graph, graph.get_nodes()[0])
     index = 0
@@ -145,8 +148,8 @@ def double_tree(graph):
     mst_graph = make_graph_from_mst(mst, graph)
     res_tour = recursive_depth_first_search(mst_graph, mst_graph.get_nodes()[0])
 
-    while index < len(res_tour)-1:
-        temp_weight = float(graph.get_default_weights((res_tour[index], res_tour[index+1]))[0])
+    while index < len(res_tour) - 1:
+        temp_weight = float(graph.get_default_weights((res_tour[index], res_tour[index + 1]))[0])
         tour_weight += temp_weight
         index += 1
 
@@ -154,4 +157,3 @@ def double_tree(graph):
 
     print tour_weight + temp_weight
     print res_tour
-

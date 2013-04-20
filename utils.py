@@ -1,6 +1,7 @@
 from graph import Graph
 from basegraph import EdgeProperty
 
+
 def convert_matrix(matrix):
     """
         Converts the input adj. matrix
@@ -66,7 +67,6 @@ def make_graph_from_mst(mst, input_graph):
         w, u, v = w_edge[0], w_edge[1][0], w_edge[1][1]
 
         attr = EdgeProperty(wgt=w)
-        res_graph.add_edges([(u,v), attr])
+        res_graph.add_edges([(u, v), attr])
 
     return res_graph
-

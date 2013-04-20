@@ -49,4 +49,3 @@ class PriorityQueue(object):
 
     def contains_task(self, task):
         return task in self.entry_finder
-
