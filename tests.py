@@ -40,7 +40,7 @@ def test_praktikum_2(arg):
         Reading and converting the graphs (web/file).
     """
     #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/G_10_20.txt'
-    input_file = 'graphs/G_10_200.txt'
+    input_file = 'graphs/G_10_20.txt'
     result = convert_edge_list(retrieve_information_file(input_file))
     #result = convert_edge_list(retrieve_information_web(graph_url))
 
@@ -98,6 +98,6 @@ if __name__ == '__main__':
         arg = None
 
     #test_praktikum_1()
-    #test_praktikum_2(arg)
-    test_praktikum_3(arg)
+    test_praktikum_2(arg)
+    #test_praktikum_3(arg)
 

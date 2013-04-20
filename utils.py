@@ -53,11 +53,13 @@ def convert_edge_list(edge_list):
     #result_graph.set_graph_directed(False)
     return result_graph
 
-def make_graph_from_mst(mst, graph):
-    #input: (w, (u,v))
+def make_graph_from_mst(mst, input_graph):
+    """
+        Input: (weight, (u, v))
+    """
     res_graph = Graph()
 
-    for node in graph.get_nodes():
+    for node in input_graph.get_nodes():
         res_graph.add_nodes((node, None))
 
     for w_edge in mst:
@@ -67,4 +69,4 @@ def make_graph_from_mst(mst, graph):
         res_graph.add_edges([(u,v), attr])
 
     return res_graph
-        
+
