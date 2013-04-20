@@ -1,6 +1,7 @@
 from basegraph import BaseGraph
 from graph_exceptions import NodeNotInGraph
 
+
 class Graph(BaseGraph):
 
     def __init__(self, directed=False):

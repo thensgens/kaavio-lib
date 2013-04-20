@@ -1,5 +1,6 @@
 import urllib2
 
+
 def retrieve_information_web(url):
     try:
         res = urllib2.urlopen(url).readlines()

@@ -1,4 +1,3 @@
-import os
 import sys
 from algorithms import get_coherent_components_count, kruskal, prim
 from utils import convert_matrix, convert_edge_list
@@ -41,7 +40,7 @@ def test_praktikum_2(arg):
         Reading and converting the graphs (web/file).
     """
     #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/G_10_20.txt'
-    input_file = 'graphs/G_10_200.txt'
+    input_file = 'graphs/G_10_20.txt'
     result = convert_edge_list(retrieve_information_file(input_file))
     #result = convert_edge_list(retrieve_information_web(graph_url))
 
@@ -52,7 +51,7 @@ def test_praktikum_2(arg):
         print "=" * 30
         print "Kruskal algorithm"
         print "=" * 30
-        mst_kruskal = kruskal(result)
+        kruskal(result)
     elif arg == 'prim':
         """
             Tests for Prim
@@ -60,7 +59,7 @@ def test_praktikum_2(arg):
         print "=" * 30
         print "Prim algorithm"
         print "=" * 30
-        mst_prim = prim(result, result.get_nodes()[0])
+        prim(result, result.get_nodes()[0])
 
 
 if __name__ == '__main__':
@@ -74,4 +73,3 @@ if __name__ == '__main__':
 
     #test_praktikum_1()
     test_praktikum_2(arg)
-

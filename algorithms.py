@@ -56,7 +56,7 @@ def is_graph_coherent(graph, node):
 
 
 def kruskal(graph):
-    attrs  = graph.edge_attr
+    attrs = graph.edge_attr
     entries = [(float(attrs[edge][0].weight[0]), edge[0], edge[1]) for edge in attrs]
     entries.sort(lambda a, b: cmp(a[0], b[0]))
 
@@ -109,4 +109,6 @@ def prim(graph, start_node):
                 queue.add_task(task=adj_node, priority=edge_weight)
 
     print mst_sum
+    #f = open('/home/thens/Desktop/mst_2.txt', 'w')
+    #print >> f, mst
 
