@@ -1,7 +1,6 @@
-import urllib2
-import sys
 from graph import Graph
 from basegraph import EdgeProperty
+
 
 def convert_matrix(matrix):
     """
@@ -55,3 +54,18 @@ def convert_edge_list(edge_list):
     #result_graph.set_graph_directed(False)
     return result_graph
 
+
+def make_graph_from_mst(mst, graph):
+    #input: (w, (u,v))
+    res_graph = Graph()
+
+    for node in graph.get_nodes():
+        res_graph.add_nodes((node, None))
+
+    for w_edge in mst:
+        w, u, v = w_edge[0], w_edge[1][0], w_edge[1][1]
+
+        attr = EdgeProperty(wgt=w)
+        res_graph.add_edges([(u, v), attr])
+
+    return res_graph

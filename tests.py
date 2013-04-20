@@ -1,5 +1,5 @@
 import sys
-from algorithms import get_coherent_components_count, kruskal, prim
+from algorithms import get_coherent_components_count, kruskal, prim, nearest_neighbor, double_tree
 from utils import convert_matrix, convert_edge_list
 from io import retrieve_information_web, retrieve_information_file
 
@@ -40,7 +40,7 @@ def test_praktikum_2(arg):
         Reading and converting the graphs (web/file).
     """
     #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/G_10_20.txt'
-    input_file = 'graphs/G_10_20.txt'
+    input_file = 'graphs/G_10_200.txt'
     result = convert_edge_list(retrieve_information_file(input_file))
     #result = convert_edge_list(retrieve_information_web(graph_url))
 
@@ -62,6 +62,33 @@ def test_praktikum_2(arg):
         prim(result, result.get_nodes()[0])
 
 
+def test_praktikum_3(arg):
+    """
+        Reading and converting the graphs (web/file).
+    """
+    #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/G_10_20.txt'
+    input_file = 'graphs/K_10.txt'
+    result = convert_edge_list(retrieve_information_file(input_file))
+    #result = convert_edge_list(retrieve_information_web(graph_url))
+
+    if arg == 'nn':
+        """
+            Tests for Kruskal
+        """
+        print "=" * 30
+        print "nearest_neighbor algorithm"
+        print "=" * 30
+        nearest_neighbor(result, result.get_nodes()[0])
+
+    if arg == 'dt':
+        """
+            Tests for Kruskal
+        """
+        print "=" * 30
+        print "nearest_neighbor algorithm"
+        print "=" * 30
+        double_tree(result)
+
 if __name__ == '__main__':
     """
         param arg contains the specified algorithm, e.g. 'kruskal'
@@ -72,4 +99,5 @@ if __name__ == '__main__':
         arg = None
 
     #test_praktikum_1()
-    test_praktikum_2(arg)
+    #test_praktikum_2(arg)
+    test_praktikum_3(arg)

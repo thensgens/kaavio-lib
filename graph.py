@@ -59,10 +59,3 @@ class Graph(BaseGraph):
         for node, neighbours in self.__node_adj_list.items():
             output.append('%s  ->  %s' % (node, neighbours))
         return '\n'.join(output)
-
-if __name__ == '__main__':
-    gr = Graph()
-    gr.add_nodes(('A', None), ('B', None), ('C', None))
-    gr.add_edges([('A', 'B'), None])
-    gr.add_edges([('A', 'B'), None], [('B', 'C'), None])
-    print gr

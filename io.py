@@ -14,4 +14,3 @@ def retrieve_information_file(input):
     with open(input, "r") as f:
         res = f.readlines()
     return res
-
