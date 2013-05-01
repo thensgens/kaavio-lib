@@ -136,8 +136,8 @@ def nearest_neighbor(graph, node):
     # add the last weight (weighted edge to the starting node)
     temp_weight = float(graph.get_default_weights((node, current_node))[0])
 
-    print visited_nodes
-    print tour_weight + temp_weight
+    print "Tour: ", visited_nodes
+    print "Cost: ", tour_weight + temp_weight
 
 
 def double_tree(graph):
@@ -155,5 +155,24 @@ def double_tree(graph):
 
     temp_weight = float(graph.get_default_weights((res_tour[-1], res_tour[0]))[0])
 
-    print tour_weight + temp_weight
-    print res_tour
+    print "Tour: ", res_tour
+    print "Cost: ", tour_weight + temp_weight
+
+def branch_and_bound(graph):
+    nodes = graph.get_nodes()
+    upper_bound = 0
+    stack_nodes = []
+
+    #1. Linear Depth
+    current_node = nodes.pop(0)
+    stack_nodes.append(current_node)
+    #get edge_weight (current_node, node[0])
+    #track_weight += edge_weight
+    #if track_weight >= upper_bound -> next branch
+    #if track_weight < upper_bound -> run into depth
+
+    #1 Tiefensuche auf Ast
+    #2 Backtracking
+    #3 Obere Schranke setzen
+    pass
+>>>>>>> Added notes Branch & Bound

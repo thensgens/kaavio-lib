@@ -40,7 +40,7 @@ def test_praktikum_2(arg):
         Reading and converting the graphs (web/file).
     """
     #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/G_10_20.txt'
-    input_file = 'graphs/G_10_200.txt'
+    input_file = 'graphs/G_100_200.txt'
     result = convert_edge_list(retrieve_information_file(input_file))
     #result = convert_edge_list(retrieve_information_web(graph_url))
 
@@ -73,7 +73,7 @@ def test_praktikum_3(arg):
 
     if arg == 'nn':
         """
-            Tests for Kruskal
+            Tests for nearest_neighbor
         """
         print "=" * 30
         print "nearest_neighbor algorithm"
@@ -82,7 +82,7 @@ def test_praktikum_3(arg):
 
     if arg == 'dt':
         """
-            Tests for Kruskal
+            Tests for double_tree
         """
         print "=" * 30
         print "nearest_neighbor algorithm"
