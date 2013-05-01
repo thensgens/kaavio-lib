@@ -5,6 +5,7 @@ that can be performed on graphs.
 
 from heap import PriorityQueue
 from utils import make_graph_from_mst
+import itertools
 
 
 def recursive_depth_first_search(graph, node, visited_nodes=[]):
@@ -149,23 +150,60 @@ def double_tree(graph):
     res_tour = recursive_depth_first_search(mst_graph, mst_graph.get_nodes()[0])
 
     while index < len(res_tour) - 1:
-        temp_weight = float(graph.get_default_weights((res_tour[index], res_tour[index + 1]))[0])
-        tour_weight += temp_weight
+        tour_weight += float(graph.get_default_weights((res_tour[index], res_tour[index + 1]))[0])
         index += 1
 
-    temp_weight = float(graph.get_default_weights((res_tour[-1], res_tour[0]))[0])
+    tour_weight += float(graph.get_default_weights((res_tour[-1], res_tour[0]))[0])
 
     print "Tour: ", res_tour
-    print "Cost: ", tour_weight + temp_weight
+    print "Cost: ", tour_weight
 
 def branch_and_bound(graph):
     nodes = graph.get_nodes()
     upper_bound = 0
-    stack_nodes = []
+    index = 0
 
+    #1. Get initial upper_bound
+    while index < len(nodes) - 1:
+        upper_bound += float(graph.get_default_weights((nodes[index], nodes[index + 1]))[0])
+        index += 1
+
+    upper_bound += float(graph.get_default_weights((nodes[-1], nodes[0]))[0])
+
+    #2. Permutate & Branch
+    for perm in itertools.permutations(nodes[1:]):
+        temp_bound = 0
+        index = 0
+        broke = False
+        perm = list(perm)
+        perm.insert(0, nodes[0])
+
+        while index < len(perm) - 1:
+            temp_bound += float(graph.get_default_weights((perm[index], perm[index + 1]))[0])
+            index += 1
+            if temp_bound > upper_bound:
+                broke = True
+                #print temp_bound, "cut", upper_bound
+                break
+
+        if not broke:
+            #print "not broke"
+            temp_bound += float(graph.get_default_weights((perm[-1], perm[0]))[0])
+            if temp_bound < upper_bound:
+                upper_bound = temp_bound
+
+    print upper_bound
+
+    # 0 1 2
+    # 0 2 1
+    # 1 2 0
+    # 1 0 2
+    # 2 0 1
+    # 2 1 0
     #1. Linear Depth
-    current_node = nodes.pop(0)
-    stack_nodes.append(current_node)
+
+    
+
     #get edge_weight (current_node, node[0])
     #track_weight += edge_weight
     #if track_weight >= upper_bound -> next branch
@@ -174,5 +212,45 @@ def branch_and_bound(graph):
     #1 Tiefensuche auf Ast
     #2 Backtracking
     #3 Obere Schranke setzen
-    pass
->>>>>>> Added notes Branch & Bound
+def branch_bound_backtrack_start(graph):
+    nodes = graph.get_nodes()
+    print branch_bound_backtrack(graph, [nodes[0]], nodes[1:], 0, None)
+
+def branch_bound_backtrack(graph, visited, unvisited, track_cost, minCost):
+    visited.append(unvisited.pop(0))
+
+    for perm in itertools.permutations(unvisited):
+        print perm
+        minCost = branch_bound_backtrack(graph, visited, list(perm), track_cost, minCost)
+
+    if len(unvisited) <= 1:
+        return minCost
+
+    track_cost += float(graph.get_default_weights((visited[-2], visited[-1]))[0])
+    if minCost is not None and track_cost >= minCost:
+        return minCost
+
+    if len(visited) == graph.get_node_count():
+        track_cost += float(graph.get_default_weights((visited[-1], visited[0]))[0])
+        if minCost is None or track_cost < minCost:
+            minCost = track_cost
+            return minCost
+
+    #minCost = branch_bound_backtrack(graph, visited, unvisited, track_cost, minCost)
+
+
+
+
+    return minCost
+
+
+def permutate(nodelist):
+    pool = tuple(nodelist)
+    n = len(pool)
+    for indices in product(range(n), repeat=n):
+        if len(set(indices)) == n:
+            yield tuple(pool[i] for i in indices)
+
+    #0 1 2
+
+

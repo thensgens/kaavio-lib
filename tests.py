@@ -1,5 +1,5 @@
 import sys
-from algorithms import get_coherent_components_count, kruskal, prim, nearest_neighbor, double_tree
+from algorithms import get_coherent_components_count, kruskal, prim, nearest_neighbor, double_tree, branch_and_bound, branch_bound_backtrack_start
 from utils import convert_matrix, convert_edge_list
 from io import retrieve_information_web, retrieve_information_file
 
@@ -85,9 +85,27 @@ def test_praktikum_3(arg):
             Tests for double_tree
         """
         print "=" * 30
-        print "nearest_neighbor algorithm"
+        print "double_tree"
         print "=" * 30
         double_tree(result)
+
+    if arg == 'bb':
+        """
+            Tests for branch and bound
+        """
+        print "=" * 30
+        print "branch and bound"
+        print "=" * 30
+        branch_and_bound(result)
+
+    if arg == 'bbb':
+        """
+            Tests for branch and bound backtrack
+        """
+        print "=" * 30
+        print "branch and bound backtrack"
+        print "=" * 30
+        branch_bound_backtrack_start(result)
 
 if __name__ == '__main__':
     """
