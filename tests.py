@@ -1,5 +1,5 @@
 import sys
-from algorithms import get_coherent_components_count, kruskal, prim, nearest_neighbor, double_tree, branch_and_bound, branch_bound_backtrack_start
+from algorithms import get_coherent_components_count, kruskal, prim, nearest_neighbor, double_tree, brute_force_tsp, branch_bound_backtrack_start
 from utils import convert_matrix, convert_edge_list
 from io import retrieve_information_web, retrieve_information_file
 
@@ -89,14 +89,15 @@ def test_praktikum_3(arg):
         print "=" * 30
         double_tree(result)
 
+
 def test_praktikum_4(arg):
     """
         Reading and converting the graphs (web/file).
     """
     graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/K_10.txt'
-    #input_file = 'graphs/K_10.txt'
+    # input_file = 'graphs/K_test.txt'
     result = convert_edge_list(retrieve_information_web(graph_url))
-    #result = convert_edge_list(retrieve_information_web(graph_url))
+    # result = convert_edge_list(retrieve_information_file(input_file))
 
     if arg == 'bb':
         """
@@ -107,6 +108,15 @@ def test_praktikum_4(arg):
         print "=" * 30
         #branch_and_bound(result)
         branch_bound_backtrack_start(result)
+
+    if arg == 'bb2':
+        """
+            Tests for Brute-Force (brute-force / itertools)
+        """
+        print "=" * 30
+        print "Brute-Force (itertools.permutations())"
+        print "=" * 30
+        brute_force_tsp(result)
 
 
 if __name__ == '__main__':
