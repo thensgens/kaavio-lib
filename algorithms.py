@@ -168,7 +168,7 @@ def start_bnb_bruteforce(graph, bnb=True):
         Branch-and-Bound Property (holds necessary values for the computation)
     """
     class BnB_Property(object):
-        def __init__(self, best, result_path, current_cost, nodes, visited):
+        def __init__(self, best, result_path, current_cost, visited):
             self.__best = best
             self.__result_path = result_path
             self.__current_cost = current_cost
@@ -181,19 +181,16 @@ def start_bnb_bruteforce(graph, bnb=True):
         def set_result_path(self, result_path): self.__result_path = result_path
         def get_current_cost(self): return self.__current_cost
         def set_current_cost(self, current_cost): self.__current_cost = current_cost
-        def get_nodes(self): return self.__nodes
-        def set_nodes(self, nodes): self.__nodes = nodes
         def get_visited(self): return self.__visited
         def set_visited(self, visited): self.__visited = visited
 
         best = property(get_best, set_best)
         result_path = property(get_result_path, set_result_path)
         current_cost = property(get_current_cost, set_current_cost)
-        nodes = property(get_nodes, set_nodes)
         visited = property(get_visited, set_visited)
 
     # create BnB property object (w/ default initialize values)
-    bnb_prop = BnB_Property(99999., [], 0., [], {})
+    bnb_prop = BnB_Property(99999., [], 0., {})
 
     # set the start node for BnB
     start = nodes[0]
