@@ -1,11 +1,11 @@
 import sys
-from algorithms import get_coherent_components_count, kruskal, prim, nearest_neighbor, double_tree, brute_force_tsp, branch_bound_backtrack_start
+from algorithms import get_coherent_components_count, kruskal, prim, nearest_neighbor, double_tree, brute_force_itertools, start_bnb_bruteforce
 from utils import convert_matrix, convert_edge_list
 from io import retrieve_information_web, retrieve_information_file
 
 
 def test_praktikum_1():
-    print "=" * 30
+    print "=" * 40
     print 'Test from file'
     input_file = 'test_graph.txt'
     result = convert_edge_list(retrieve_information_file(input_file))
@@ -13,7 +13,7 @@ def test_praktikum_1():
         print result
     print get_coherent_components_count(result)
 
-    print "=" * 30
+    print "=" * 40
 
     # convert from adj. matrix
     print 'Test from web'
@@ -23,7 +23,7 @@ def test_praktikum_1():
         print result
     print get_coherent_components_count(result)
 
-    print "=" * 30
+    print "=" * 40
 
     # convert from edge list
     print "Test from web"
@@ -32,7 +32,7 @@ def test_praktikum_1():
     if len(sys.argv) > 1 and sys.argv[1] == 'verbose':
         print result
     print get_coherent_components_count(result)
-    print "=" * 30
+    print "=" * 40
 
 
 def test_praktikum_2(arg):
@@ -48,17 +48,17 @@ def test_praktikum_2(arg):
         """
             Tests for Kruskal
         """
-        print "=" * 30
+        print "=" * 40
         print "Kruskal algorithm"
-        print "=" * 30
+        print "=" * 40
         kruskal(result)
     elif arg == 'prim':
         """
             Tests for Prim
         """
-        print "=" * 30
+        print "=" * 40
         print "Prim algorithm"
-        print "=" * 30
+        print "=" * 40
         prim(result, result.get_nodes()[0])
 
 
@@ -75,18 +75,18 @@ def test_praktikum_3(arg):
         """
             Tests for Kruskal
         """
-        print "=" * 30
+        print "=" * 40
         print "nearest_neighbor algorithm"
-        print "=" * 30
+        print "=" * 40
         nearest_neighbor(result, result.get_nodes()[0])
 
     if arg == 'dt':
         """
             Tests for Kruskal
         """
-        print "=" * 30
+        print "=" * 40
         print "nearest_neighbor algorithm"
-        print "=" * 30
+        print "=" * 40
         double_tree(result)
 
 
@@ -95,28 +95,37 @@ def test_praktikum_4(arg):
         Reading and converting the graphs (web/file).
     """
     graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/K_10.txt'
-    # input_file = 'graphs/K_test.txt'
     result = convert_edge_list(retrieve_information_web(graph_url))
+
+    # input_file = 'graphs/K_test.txt'
     # result = convert_edge_list(retrieve_information_file(input_file))
 
     if arg == 'bb':
         """
             Tests for Branch-and_Bound
         """
-        print "=" * 30
+        print "=" * 40
         print "Branch-and-Bound"
-        print "=" * 30
-        #branch_and_bound(result)
-        branch_bound_backtrack_start(result)
+        print "=" * 40
+        start_bnb_bruteforce(result)
 
-    if arg == 'bb2':
+    if arg == 'bf':
+        """
+            Tests for Brute Force
+        """
+        print "=" * 40
+        print "Brute Force"
+        print "=" * 40
+        start_bnb_bruteforce(result, False)
+
+    if arg == 'bfiter':
         """
             Tests for Brute-Force (brute-force / itertools)
         """
-        print "=" * 30
+        print "=" * 40
         print "Brute-Force (itertools.permutations())"
-        print "=" * 30
-        brute_force_tsp(result)
+        print "=" * 40
+        brute_force_itertools(result)
 
 
 if __name__ == '__main__':

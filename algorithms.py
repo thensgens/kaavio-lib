@@ -159,7 +159,139 @@ def double_tree(graph):
     print "Cost: ", tour_weight
 
 
-def brute_force_tsp(graph):
+"""  Start corresponding Branch-and-Bound or Brute-Force algorithms."""
+def start_bnb_bruteforce(graph, bnb=True):
+    nodes = graph.get_nodes()
+    curr_path = []
+
+    """
+        Branch-and-Bound Property (holds necessary values for the computation)
+    """
+    class BnB_Property(object):
+        def __init__(self, best, result_path, current_cost, nodes, nodes_dict):
+            self.__best = best
+            self.__result_path = result_path
+            self.__current_cost = current_cost
+            self.__nodes = nodes
+            self.__nodes_dict = nodes_dict
+
+        def get_best(self): return self.__best
+        def set_best(self, best): self.__best = best
+        def get_result_path(self): return self.__result_path
+        def set_result_path(self, result_path): self.__result_path = result_path
+        def get_current_cost(self): return self.__current_cost
+        def set_current_cost(self, current_cost): self.__current_cost = current_cost
+        def get_nodes(self): return self.__nodes
+        def set_nodes(self, nodes): self.__nodes = nodes
+        def get_nodes_dict(self): return self.__nodes_dict
+        def set_nodes_dict(self, nodes_dict): self.__nodes_dict = nodes_dict
+
+        best = property(get_best, set_best)
+        result_path = property(get_result_path, set_result_path)
+        current_cost = property(get_current_cost, set_current_cost)
+        nodes = property(get_nodes, set_nodes)
+        nodes_dict = property(get_nodes_dict, set_nodes_dict)
+
+    # create BnB property object (w/ default initialize values)
+    bnb_prop = BnB_Property(99999., [], 0., [], {})
+
+    # set the start node for BnB
+    start = nodes[0]
+
+    # initially all nodes are unvisited
+    for node in nodes:
+        bnb_prop.nodes_dict[node] = False
+
+    # start BnB-Algorithm w/ backtracking (default); if not start brute force algorith
+    if bnb:
+        branch_bound_backtrack(graph, start, start, start, curr_path, bnb_prop)
+    else:
+        brute_force(graph, start, start, start, curr_path, bnb_prop)
+
+    # print the result path and the actual result (sum of edge weights)
+    print bnb_prop.result_path
+    print bnb_prop.best
+
+
+def branch_bound_backtrack(graph, last, current, start, curr_path, bnb_prop):
+    bnb_prop.nodes_dict[current] = True
+
+    try:
+        # sum the edge's (last, current) cost to the current path costs
+        temp_cost = bnb_prop.current_cost + float(graph.get_default_weights((last, current))[0])
+
+        # if the path cost is already higher than the (temporarily) best value (upper bound) -> STOP.
+        if temp_cost > bnb_prop.best:
+            bnb_prop.nodes_dict[current] = False
+            return
+
+        bnb_prop.current_cost = temp_cost
+        curr_path.append((last, current))
+    except KeyError:
+        pass
+
+    all_nodes_visited = all(bnb_prop.nodes_dict.values())
+
+    if all_nodes_visited and bnb_prop.nodes_dict[start] and current == start:
+        del bnb_prop.result_path[:]
+        bnb_prop.result_path.extend(curr_path)
+        bnb_prop.best = bnb_prop.current_cost
+        bnb_prop.current_cost -= float(graph.get_default_weights((last, current))[0])
+        curr_path.pop(len(curr_path) - 1)
+        bnb_prop.nodes_dict[current] = False
+        return
+
+    for next in graph.get_node_neighbours(current):
+        if not bnb_prop.nodes_dict[next] or (all_nodes_visited and next == start):
+            branch_bound_backtrack(graph, current, next, start, curr_path, bnb_prop)
+
+    try:
+        bnb_prop.current_cost -= float(graph.get_default_weights((last, current))[0])
+        curr_path.pop(len(curr_path) - 1)
+    except KeyError:
+        pass
+
+    bnb_prop.nodes_dict[current] = False
+
+
+def brute_force(graph, last, current, start, curr_path, bnb_prop):
+    bnb_prop.nodes_dict[current] = True
+
+    try:
+        # sum the edge's (last, current) cost to the current path costs
+        temp_cost = bnb_prop.current_cost + float(graph.get_default_weights((last, current))[0])
+        bnb_prop.current_cost = temp_cost
+        curr_path.append((last, current))
+    except KeyError:
+        pass
+
+    all_nodes_visited = all(bnb_prop.nodes_dict.values())
+
+    if all_nodes_visited and bnb_prop.nodes_dict[start] and current == start:
+        if bnb_prop.best >= bnb_prop.current_cost:
+            del bnb_prop.result_path[:]
+            bnb_prop.result_path.extend(curr_path)
+            bnb_prop.best = bnb_prop.current_cost
+
+        bnb_prop.current_cost -= float(graph.get_default_weights((last, current))[0])
+        curr_path.pop(len(curr_path) - 1)
+        bnb_prop.nodes_dict[current] = False
+        return
+
+    for next in graph.get_node_neighbours(current):
+        if not bnb_prop.nodes_dict[next] or (all_nodes_visited and next == start):
+            branch_bound_backtrack(graph, current, next, start, curr_path, bnb_prop)
+
+    try:
+        bnb_prop.current_cost -= float(graph.get_default_weights((last, current))[0])
+        curr_path.pop(len(curr_path) - 1)
+    except KeyError:
+        pass
+
+    bnb_prop.nodes_dict[current] = False
+
+
+def brute_force_itertools(graph):
     nodes = graph.get_nodes()
     upper_bound = 0
     index = 0
@@ -182,127 +314,14 @@ def brute_force_tsp(graph):
         while index < len(perm) - 1:
             temp_bound += float(graph.get_default_weights((perm[index], perm[index + 1]))[0])
             index += 1
-            if temp_bound > upper_bound:
-                broke = True
-                #print temp_bound, "cut", upper_bound
-                break
+            # if temp_bound > upper_bound:
+            #     broke = True
+            #     #print temp_bound, "cut", upper_bound
+            #     break
 
         if not broke:
-            #print "not broke"
             temp_bound += float(graph.get_default_weights((perm[-1], perm[0]))[0])
             if temp_bound < upper_bound:
                 upper_bound = temp_bound
 
     print upper_bound
-
-
-"""  Branch-and-Bound """
-def branch_bound_backtrack_start(graph):
-    nodes = graph.get_nodes()
-    result = []
-    path = []
-
-    """
-        TODO: 
-            - branch_bound_backtrack's result is not "used"
-            - remove bnb_prop's nodes (only used for 'all_visited_nodes')
-    """
-
-    """
-        Branch-and-Bound Property (holds necessary values for the computation)
-    """
-    class BnB_Property(object):
-        def __init__(self, best, current_cost, nodes, nodes_dict):
-            self.__best = best
-            self.__current_cost = current_cost
-            self.__nodes = nodes
-            self.__nodes_dict = nodes_dict
-
-        def get_best(self): return self.__best
-        def set_best(self, best): self.__best = best
-        def get_current_cost(self): return self.__current_cost
-        def set_current_cost(self, current_cost): self.__current_cost = current_cost
-        def get_nodes(self): return self.__nodes
-        def set_nodes(self, nodes): self.__nodes = nodes
-        def get_nodes_dict(self): return self.__nodes_dict
-        def set_nodes_dict(self, nodes_dict): self.__nodes_dict = nodes_dict
-
-        best = property(get_best, set_best)
-        current_cost = property(get_current_cost, set_current_cost)
-        nodes = property(get_nodes, set_nodes)
-        nodes_dict = property(get_nodes_dict, set_nodes_dict)
-
-    # create BnB property object (w/ default initialize values)
-    bnb_prop = BnB_Property(99999., 0., [], {})
-
-    # set the start node for BnB
-    start = nodes[0]
-
-    # initially all nodes are unvisited
-    for node in nodes:
-        bnb_prop.nodes_dict[node] = False
-
-    # start BnB-Algorithm w/ backtracking
-    branch_bound_backtrack(graph, start, start, start, result, path, bnb_prop)
-    print bnb_prop.best
-
-
-def branch_bound_backtrack(graph, last, current, start, result, path, bnb_prop):
-    bnb_prop.nodes_dict[current] = True
-    if current not in bnb_prop.nodes:
-        bnb_prop.nodes.append(current)
-
-    try:
-        # sum the edge's (last, current) cost to the current path costs
-        temp_cost = bnb_prop.current_cost + float(graph.get_default_weights((last, current))[0])
-
-        """
-            Comment the following if condition for brute-force...
-        """
-        # if the path cost is already higher than the (temporarily) best value (upper bound) -> STOP.
-        if temp_cost > bnb_prop.best:
-            bnb_prop.nodes_dict[current] = False
-            bnb_prop.nodes.remove(current)
-            return
-
-        # if the path cost is less/equal than the upper bound -> save the new current (path) cost
-        # and append the edge to the path
-        bnb_prop.current_cost = temp_cost
-        path.append((last, current))
-    except KeyError:
-        pass
-
-    all_nodes_visited = len(bnb_prop.nodes) == graph.get_node_count()
-
-    if all_nodes_visited and bnb_prop.nodes_dict[start] and current == start:
-        """ 
-            Comment the following if condition for brute-force...
-        """
-        # if bnb_prop.best >= bnb_prop.current_cost:
-        #     del result[:]
-        #     result.extend(path)
-        #     bnb_prop.best = bnb_prop.current_cost
-
-        del result[:]
-        result.extend(path)
-        bnb_prop.best = bnb_prop.current_cost
-        bnb_prop.current_cost -= float(graph.get_default_weights((last, current))[0])
-        path.pop(len(path) - 1)
-        bnb_prop.nodes_dict[current] = False
-        return
-
-    for next in graph.get_node_neighbours(current):
-        if not bnb_prop.nodes_dict[next] or (all_nodes_visited and next == start):
-            branch_bound_backtrack(graph, current, next, start, result, path, bnb_prop)
-
-    try:
-        bnb_prop.current_cost -= float(graph.get_default_weights((last, current))[0])
-        path.pop(len(path) - 1)
-    except KeyError:
-        pass
-
-    bnb_prop.nodes_dict[current] = False
-    try:
-        bnb_prop.nodes.remove(current)
-    except:
-        pass
