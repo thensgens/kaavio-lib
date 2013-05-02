@@ -168,12 +168,12 @@ def start_bnb_bruteforce(graph, bnb=True):
         Branch-and-Bound Property (holds necessary values for the computation)
     """
     class BnB_Property(object):
-        def __init__(self, best, result_path, current_cost, nodes, nodes_dict):
+        def __init__(self, best, result_path, current_cost, nodes, visited):
             self.__best = best
             self.__result_path = result_path
             self.__current_cost = current_cost
             self.__nodes = nodes
-            self.__nodes_dict = nodes_dict
+            self.__visited = visited
 
         def get_best(self): return self.__best
         def set_best(self, best): self.__best = best
@@ -183,14 +183,14 @@ def start_bnb_bruteforce(graph, bnb=True):
         def set_current_cost(self, current_cost): self.__current_cost = current_cost
         def get_nodes(self): return self.__nodes
         def set_nodes(self, nodes): self.__nodes = nodes
-        def get_nodes_dict(self): return self.__nodes_dict
-        def set_nodes_dict(self, nodes_dict): self.__nodes_dict = nodes_dict
+        def get_visited(self): return self.__visited
+        def set_visited(self, visited): self.__visited = visited
 
         best = property(get_best, set_best)
         result_path = property(get_result_path, set_result_path)
         current_cost = property(get_current_cost, set_current_cost)
         nodes = property(get_nodes, set_nodes)
-        nodes_dict = property(get_nodes_dict, set_nodes_dict)
+        visited = property(get_visited, set_visited)
 
     # create BnB property object (w/ default initialize values)
     bnb_prop = BnB_Property(99999., [], 0., [], {})
@@ -200,9 +200,9 @@ def start_bnb_bruteforce(graph, bnb=True):
 
     # initially all nodes are unvisited
     for node in nodes:
-        bnb_prop.nodes_dict[node] = False
+        bnb_prop.visited[node] = False
 
-    # start BnB-Algorithm w/ backtracking (default); if not start brute force algorith
+    # start BnB-Algorithm w/ backtracking (default); if not start brute force algorithm
     if bnb:
         branch_bound_backtrack(graph, start, start, start, curr_path, bnb_prop)
     else:
@@ -214,7 +214,7 @@ def start_bnb_bruteforce(graph, bnb=True):
 
 
 def branch_bound_backtrack(graph, last, current, start, curr_path, bnb_prop):
-    bnb_prop.nodes_dict[current] = True
+    bnb_prop.visited[current] = True
 
     try:
         # sum the edge's (last, current) cost to the current path costs
@@ -222,7 +222,7 @@ def branch_bound_backtrack(graph, last, current, start, curr_path, bnb_prop):
 
         # if the path cost is already higher than the (temporarily) best value (upper bound) -> STOP.
         if temp_cost > bnb_prop.best:
-            bnb_prop.nodes_dict[current] = False
+            bnb_prop.visited[current] = False
             return
 
         bnb_prop.current_cost = temp_cost
@@ -230,19 +230,19 @@ def branch_bound_backtrack(graph, last, current, start, curr_path, bnb_prop):
     except KeyError:
         pass
 
-    all_nodes_visited = all(bnb_prop.nodes_dict.values())
+    all_nodes_visited = all(bnb_prop.visited.values())
 
-    if all_nodes_visited and bnb_prop.nodes_dict[start] and current == start:
+    if all_nodes_visited and current == start:
         del bnb_prop.result_path[:]
         bnb_prop.result_path.extend(curr_path)
         bnb_prop.best = bnb_prop.current_cost
         bnb_prop.current_cost -= float(graph.get_default_weights((last, current))[0])
         curr_path.pop(len(curr_path) - 1)
-        bnb_prop.nodes_dict[current] = False
+        bnb_prop.visited[current] = False
         return
 
     for next in graph.get_node_neighbours(current):
-        if not bnb_prop.nodes_dict[next] or (all_nodes_visited and next == start):
+        if not bnb_prop.visited[next] or (all_nodes_visited and next == start):
             branch_bound_backtrack(graph, current, next, start, curr_path, bnb_prop)
 
     try:
@@ -251,11 +251,11 @@ def branch_bound_backtrack(graph, last, current, start, curr_path, bnb_prop):
     except KeyError:
         pass
 
-    bnb_prop.nodes_dict[current] = False
+    bnb_prop.visited[current] = False
 
 
 def brute_force(graph, last, current, start, curr_path, bnb_prop):
-    bnb_prop.nodes_dict[current] = True
+    bnb_prop.visited[current] = True
 
     try:
         # sum the edge's (last, current) cost to the current path costs
@@ -265,9 +265,9 @@ def brute_force(graph, last, current, start, curr_path, bnb_prop):
     except KeyError:
         pass
 
-    all_nodes_visited = all(bnb_prop.nodes_dict.values())
+    all_nodes_visited = all(bnb_prop.visited.values())
 
-    if all_nodes_visited and bnb_prop.nodes_dict[start] and current == start:
+    if all_nodes_visited and bnb_prop.visited[start] and current == start:
         if bnb_prop.best >= bnb_prop.current_cost:
             del bnb_prop.result_path[:]
             bnb_prop.result_path.extend(curr_path)
@@ -275,11 +275,11 @@ def brute_force(graph, last, current, start, curr_path, bnb_prop):
 
         bnb_prop.current_cost -= float(graph.get_default_weights((last, current))[0])
         curr_path.pop(len(curr_path) - 1)
-        bnb_prop.nodes_dict[current] = False
+        bnb_prop.visited[current] = False
         return
 
     for next in graph.get_node_neighbours(current):
-        if not bnb_prop.nodes_dict[next] or (all_nodes_visited and next == start):
+        if not bnb_prop.visited[next] or (all_nodes_visited and next == start):
             branch_bound_backtrack(graph, current, next, start, curr_path, bnb_prop)
 
     try:
@@ -288,7 +288,7 @@ def brute_force(graph, last, current, start, curr_path, bnb_prop):
     except KeyError:
         pass
 
-    bnb_prop.nodes_dict[current] = False
+    bnb_prop.visited[current] = False
 
 
 def brute_force_itertools(graph):
