@@ -255,12 +255,15 @@ def branch_bound_backtrack(graph, last, current, start, result, path, bnb_prop):
     try:
         # sum the edge's (last, current) cost to the current path costs
         temp_cost = bnb_prop.current_cost + float(graph.get_default_weights((last, current))[0])
-        # if the path cost is already higher than the (temporarily) best value (upper bound) -> STOP.
 
-        # if temp_cost > bnb_prop.best:
-        #     bnb_prop.nodes_dict[current] = False
-        #     bnb_prop.nodes.remove(current)
-        #     return
+        """
+            Comment the following if condition for brute-force...
+        """
+        # if the path cost is already higher than the (temporarily) best value (upper bound) -> STOP.
+        if temp_cost > bnb_prop.best:
+            bnb_prop.nodes_dict[current] = False
+            bnb_prop.nodes.remove(current)
+            return
 
         # if the path cost is less/equal than the upper bound -> save the new current (path) cost
         # and append the edge to the path
@@ -272,11 +275,17 @@ def branch_bound_backtrack(graph, last, current, start, result, path, bnb_prop):
     all_nodes_visited = len(bnb_prop.nodes) == graph.get_node_count()
 
     if all_nodes_visited and bnb_prop.nodes_dict[start] and current == start:
-        if bnb_prop.best >= bnb_prop.current_cost:
-            del result[:]
-            result.extend(path)
-            bnb_prop.best = bnb_prop.current_cost
+        """ 
+            Comment the following if condition for brute-force...
+        """
+        # if bnb_prop.best >= bnb_prop.current_cost:
+        #     del result[:]
+        #     result.extend(path)
+        #     bnb_prop.best = bnb_prop.current_cost
 
+        del result[:]
+        result.extend(path)
+        bnb_prop.best = bnb_prop.current_cost
         bnb_prop.current_cost -= float(graph.get_default_weights((last, current))[0])
         path.pop(len(path) - 1)
         bnb_prop.nodes_dict[current] = False
