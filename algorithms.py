@@ -158,19 +158,20 @@ def double_tree(graph):
     print "Tour: ", res_tour
     print "Cost: ", tour_weight
 
+
 def branch_and_bound(graph):
     nodes = graph.get_nodes()
     upper_bound = 0
     index = 0
 
-    #1. Get initial upper_bound
+    # 1. Get initial upper_bound
     while index < len(nodes) - 1:
         upper_bound += float(graph.get_default_weights((nodes[index], nodes[index + 1]))[0])
         index += 1
 
     upper_bound += float(graph.get_default_weights((nodes[-1], nodes[0]))[0])
 
-    #2. Permutate & Branch
+    # 2. Permutate & Branch
     for perm in itertools.permutations(nodes[1:]):
         temp_bound = 0
         index = 0
@@ -194,63 +195,125 @@ def branch_and_bound(graph):
 
     print upper_bound
 
-    # 0 1 2
-    # 0 2 1
-    # 1 2 0
-    # 1 0 2
-    # 2 0 1
-    # 2 1 0
-    #1. Linear Depth
 
-    
+"""  Branch-and-Bound """
 
-    #get edge_weight (current_node, node[0])
-    #track_weight += edge_weight
-    #if track_weight >= upper_bound -> next branch
-    #if track_weight < upper_bound -> run into depth
+#global variables for testing purposes
+best_solution = 99999.
+current_cost = 0.0
+visited_nodes = []
+visited_dict = {}
 
-    #1 Tiefensuche auf Ast
-    #2 Backtracking
-    #3 Obere Schranke setzen
 def branch_bound_backtrack_start(graph):
     nodes = graph.get_nodes()
-    print branch_bound_backtrack(graph, [nodes[0]], nodes[1:], 0, None)
+    result = []
+    path = []
 
-def branch_bound_backtrack(graph, visited, unvisited, track_cost, minCost):
-    visited.append(unvisited.pop(0))
+    # start node for BnB
+    start = nodes[0]
 
-    for perm in itertools.permutations(unvisited):
-        print perm
-        minCost = branch_bound_backtrack(graph, visited, list(perm), track_cost, minCost)
+    # initially all nodes are unvisited
+    for node in nodes:
+        visited_dict[node] = False
 
-    if len(unvisited) <= 1:
-        return minCost
-
-    track_cost += float(graph.get_default_weights((visited[-2], visited[-1]))[0])
-    if minCost is not None and track_cost >= minCost:
-        return minCost
-
-    if len(visited) == graph.get_node_count():
-        track_cost += float(graph.get_default_weights((visited[-1], visited[0]))[0])
-        if minCost is None or track_cost < minCost:
-            minCost = track_cost
-            return minCost
-
-    #minCost = branch_bound_backtrack(graph, visited, unvisited, track_cost, minCost)
+    # start BnB-Algorithm w/ Backtracking
+    branch_bound_backtrack(graph, start, start, start, result, path)
+    print best_solution
 
 
+def branch_bound_backtrack(graph, last, current, start, result, path):
+    global best_solution
+    global current_cost
+    global visited_nodes
+    global visited_dict
+
+    visited_dict[current] = True
+    if current not in visited_nodes:
+        visited_nodes.append(current)
+
+    try:
+        temp_cost = current_cost + float(graph.get_default_weights((last, current))[0])
+        if temp_cost > best_solution:
+            visited_dict[current] = False
+            visited_nodes.remove(current)
+            return
+        current_cost = temp_cost
+        path.append((last, current))
+    except KeyError:
+        pass
+
+    all_visited = len(visited_nodes) == graph.get_node_count()
+
+    if all_visited and visited_dict[start] and current == start:
+        del result[:]
+        result.extend(path)
+        best_solution = current_cost
+        current_cost -= float(graph.get_default_weights((last, current))[0])
+        path.pop(len(path) - 1)
+        visited_dict[current] = False
+        return
+
+    for next in graph.get_node_neighbours(current):
+        if not visited_dict[next] or (all_visited and next == start):
+            branch_bound_backtrack(graph, current, next, start, result, path)
+
+    try:
+        current_cost -= float(graph.get_default_weights((last, current))[0])
+        path.pop(len(path) - 1)
+    except KeyError:
+        pass
+
+    visited_dict[current] = False
+    try:
+        visited_nodes.remove(current)
+    except:
+        pass
 
 
-    return minCost
 
 
-def permutate(nodelist):
-    pool = tuple(nodelist)
-    n = len(pool)
-    for indices in product(range(n), repeat=n):
-        if len(set(indices)) == n:
-            yield tuple(pool[i] for i in indices)
-
-    #0 1 2
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# if not unvisited:
+#     return
+# visited.append(unvisited.pop(0))
+
+# # end of recursion
+# if len(visited) == graph.get_node_count():
+#     track_cost += float(graph.get_default_weights((visited[-1], visited[0]))[0])
+#     if track_cost < min(costs):
+#         costs.append(track_cost)
+#         return
+
+# for perm in itertools.permutations(unvisited):
+#     branch_bound_backtrack(graph, visited[:], list(perm), track_cost, costs)
+
+# track_cost += float(graph.get_default_weights((visited[-2], visited[-1]))[0])
+# if costs is not None and track_cost >= costs:
+#     return costs
+
+
+# return costs
+
+
+# def permutate(nodelist):
+#     pool = tuple(nodelist)
+#     n = len(pool)
+#     for indices in product(range(n), repeat=n):
+#         if len(set(indices)) == n:
+#             yield tuple(pool[i] for i in indices)

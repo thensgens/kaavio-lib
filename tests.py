@@ -40,7 +40,7 @@ def test_praktikum_2(arg):
         Reading and converting the graphs (web/file).
     """
     #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/G_10_20.txt'
-    input_file = 'graphs/G_100_200.txt'
+    input_file = 'graphs/G_10_200.txt'
     result = convert_edge_list(retrieve_information_file(input_file))
     #result = convert_edge_list(retrieve_information_web(graph_url))
 
@@ -73,7 +73,7 @@ def test_praktikum_3(arg):
 
     if arg == 'nn':
         """
-            Tests for nearest_neighbor
+            Tests for Kruskal
         """
         print "=" * 30
         print "nearest_neighbor algorithm"
@@ -82,30 +82,32 @@ def test_praktikum_3(arg):
 
     if arg == 'dt':
         """
-            Tests for double_tree
+            Tests for Kruskal
         """
         print "=" * 30
-        print "double_tree"
+        print "nearest_neighbor algorithm"
         print "=" * 30
         double_tree(result)
 
+def test_praktikum_4(arg):
+    """
+        Reading and converting the graphs (web/file).
+    """
+    graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/K_10.txt'
+    #input_file = 'graphs/K_10.txt'
+    result = convert_edge_list(retrieve_information_web(graph_url))
+    #result = convert_edge_list(retrieve_information_web(graph_url))
+
     if arg == 'bb':
         """
-            Tests for branch and bound
+            Tests for Branch-and_Bound
         """
         print "=" * 30
-        print "branch and bound"
+        print "Branch-and-Bound"
         print "=" * 30
-        branch_and_bound(result)
-
-    if arg == 'bbb':
-        """
-            Tests for branch and bound backtrack
-        """
-        print "=" * 30
-        print "branch and bound backtrack"
-        print "=" * 30
+        #branch_and_bound(result)
         branch_bound_backtrack_start(result)
+
 
 if __name__ == '__main__':
     """
@@ -118,4 +120,5 @@ if __name__ == '__main__':
 
     #test_praktikum_1()
     #test_praktikum_2(arg)
-    test_praktikum_3(arg)
+    #test_praktikum_3(arg)
+    test_praktikum_4(arg)
