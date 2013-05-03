@@ -54,7 +54,6 @@ def get_coherent_components_count(graph):
 
 def is_graph_coherent(graph, node):
     trav_result = recursive_depth_first_search(graph, node, [])
-    #trav_result = iterative_breadth_first_search(graph, node)
     return trav_result, len(trav_result) == graph.get_node_count()
 
 
@@ -79,7 +78,7 @@ def kruskal(graph):
             # union
             sets[u].update(sets[v])
             for ver in sets[u]:
-                # set references to the specific union
+                # set references to the specific union (slooow!)
                 sets[ver] = sets[u]
             result += w
             length += 1
@@ -225,11 +224,14 @@ def branch_bound_backtrack(graph, last, current, start, curr_path, bnb_prop):
         bnb_prop.current_cost = temp_cost
         curr_path.append((last, current))
     except KeyError:
+        # this exception handles the disallowed access of non-present edges (e.g. (0, 0))
         pass
 
     all_nodes_visited = all(bnb_prop.visited.values())
 
-    if all_nodes_visited and current == start:
+    if current == start and all_nodes_visited:
+        # now we should reset the old solution (because we have a better one) and set its value
+        # to the new one; additionally remove the current element -> permutation
         del bnb_prop.result_path[:]
         bnb_prop.result_path.extend(curr_path)
         bnb_prop.best = bnb_prop.current_cost
@@ -239,7 +241,8 @@ def branch_bound_backtrack(graph, last, current, start, curr_path, bnb_prop):
         return
 
     for next in graph.get_node_neighbours(current):
-        if not bnb_prop.visited[next] or (all_nodes_visited and next == start):
+        last_step = all_nodes_visited and next == start
+        if not bnb_prop.visited[next] or last_step:
             branch_bound_backtrack(graph, current, next, start, curr_path, bnb_prop)
 
     try:
@@ -264,8 +267,8 @@ def brute_force(graph, last, current, start, curr_path, bnb_prop):
 
     all_nodes_visited = all(bnb_prop.visited.values())
 
-    if all_nodes_visited and bnb_prop.visited[start] and current == start:
-        if bnb_prop.best >= bnb_prop.current_cost:
+    if all_nodes_visited and current == start:
+        if bnb_prop.current_cost <= bnb_prop.best:
             del bnb_prop.result_path[:]
             bnb_prop.result_path.extend(curr_path)
             bnb_prop.best = bnb_prop.current_cost
@@ -276,7 +279,8 @@ def brute_force(graph, last, current, start, curr_path, bnb_prop):
         return
 
     for next in graph.get_node_neighbours(current):
-        if not bnb_prop.visited[next] or (all_nodes_visited and next == start):
+        last_step = all_nodes_visited and next == start
+        if not bnb_prop.visited[next] or last_step:
             branch_bound_backtrack(graph, current, next, start, curr_path, bnb_prop)
 
     try:
