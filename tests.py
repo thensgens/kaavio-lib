@@ -94,11 +94,11 @@ def test_praktikum_4(arg):
     """
         Reading and converting the graphs (web/file).
     """
-    graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/K_10.txt'
-    result = convert_edge_list(retrieve_information_web(graph_url))
+    # graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/K_10.txt'
+    # result = convert_edge_list(retrieve_information_web(graph_url))
 
-    # input_file = 'graphs/K_test.txt'
-    # result = convert_edge_list(retrieve_information_file(input_file))
+    input_file = 'graphs/K_10.txt'
+    result = convert_edge_list(retrieve_information_file(input_file))
 
     if arg == 'bb':
         """
