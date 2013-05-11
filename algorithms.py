@@ -94,7 +94,7 @@ def prim(graph, start_node):
     mst_sum = 0
 
     for node in graph.get_nodes():
-        queue.add_task(task=node, priority=PriorityQueue.INFINITY)
+        queue.add_task(task=node, priority=float('Inf'))
         parent[node] = None
 
     # put first node in the queue
@@ -159,8 +159,10 @@ def double_tree(graph):
     print "Cost: ", tour_weight
 
 
-"""  Start corresponding Branch-and-Bound or Brute-Force algorithms."""
 def start_bnb_bruteforce(graph, bnb=True):
+    """
+        Start corresponding Branch-and-Bound or Brute-Force algorithms.
+    """
     nodes = graph.get_nodes()
     curr_path = []
 
@@ -322,3 +324,83 @@ def brute_force_itertools(graph):
                 upper_bound = temp_bound
 
     print upper_bound
+
+
+def dijkstra(graph, start, end=None):
+    nodes = graph.get_nodes()
+    # initialize distance dictionary
+    dist = {node: float('Inf') for node in nodes}
+    dist[start] = 0
+    # initialize predecessor dictionary
+    pred = {node: None for node in nodes}
+
+    # initialize prio queue for "unvisited nodes
+    nodes_nonfinal = PriorityQueue()
+    for node in nodes:
+        nodes_nonfinal.add_task(task=node, priority=dist[node])
+
+    # main computation loop
+    while nodes_nonfinal.not_empty():
+        u = nodes_nonfinal.pop_task()
+        for adj in graph.get_node_neighbours(u):
+            if nodes_nonfinal.contains_task(adj):
+                temp = dist[u] + float(graph.get_default_weights((u, adj))[0])
+                if temp < dist[adj]:
+                    dist[adj] = temp
+                    pred[adj] = u
+                    nodes_nonfinal.add_task(task=adj, priority=temp)
+
+    # if an end node was specified, the corresponding shortest path shall be
+    # computed and displayed
+    if end is not None:
+        shortest_path(graph, pred, end)
+    else:
+        print 'Startnode: ', start
+        print 'predecessors: ', pred
+        print 'distances: ', dist
+
+
+def bellman_ford(graph, start):
+    # initialize necessary data structures
+    dist = {}
+    pred = {}
+    for node in graph.get_nodes():
+        dist[node] = float('Inf')
+        pred[node] = None
+    dist[start] = 0
+
+    # main computation loop
+    for _ in range(graph.get_node_count() - 1):
+        for u in graph.get_nodes():
+            for v in graph.get_node_neighbours(u):
+                temp = float(graph.get_default_weights((u, v))[0])
+                if dist[u] + temp < dist[v]:
+                    dist[v] = dist[u] + temp
+                    pred[v] = u
+
+    # cycle detection
+    for u in graph.get_nodes():
+        for v in graph.get_node_neighbours(u):
+            temp = float(graph.get_default_weights((u, v))[0])
+            if dist[u] + temp < dist[v]:
+                print 'Negative cycle detected :('
+
+    print 'Startnode: ', start
+    print 'predecessors: ', pred
+    print 'distances: ', dist
+
+
+def shortest_path(graph, pred, end):
+    path = [end]
+    u = end
+    path_sum = 0
+    while pred[u] is not None:
+        path_sum += float(graph.get_default_weights((pred[u], u))[0])
+        u = pred[u]
+        path.insert(0, u)
+
+    print '#' * 30
+    print path
+    print '#' * 30
+    print path_sum
+    print '#' * 30

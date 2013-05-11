@@ -54,6 +54,10 @@ class Graph(BaseGraph):
     def get_node_count(self):
         return len(self.__node_adj_list.keys())
 
+    def get_edges(self):
+        edges = [(u, v) for u in self.get_nodes() for v in self.get_node_neighbours(u)]
+        return edges
+
     def __repr__(self):
         output = []
         for node, neighbours in self.__node_adj_list.items():

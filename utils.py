@@ -32,7 +32,8 @@ def convert_edge_list(edge_list):
         Converts the input edge list
         (it's mandatory that all edges are numbers).
     """
-    result_graph = Graph()
+    #result_graph = Graph()
+    result_graph = Graph(directed=True)
     parsed_graph = [tuple(entry.strip(' \r\n').split('\t')) for entry in edge_list]
     node_count = int(parsed_graph[0][0])
 
@@ -51,8 +52,8 @@ def convert_edge_list(edge_list):
         res_edge = tuple([int(n) for n in res_edge])
         result_graph.add_edges([res_edge, attr])
 
-    #result_graph.set_graph_directed(False)
     return result_graph
+
 
 def make_graph_from_mst(mst, input_graph):
     """

@@ -4,8 +4,6 @@ import heapq
 
 class PriorityQueue(object):
 
-    INFINITY = 99999999999.0
-
     def __init__(self):
         self.pq = []
         self.entry_finder = {}

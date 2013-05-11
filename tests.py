@@ -1,5 +1,5 @@
 import sys
-from algorithms import get_coherent_components_count, kruskal, prim, nearest_neighbor, double_tree, brute_force_itertools, start_bnb_bruteforce
+from algorithms import get_coherent_components_count, kruskal, prim, nearest_neighbor, double_tree, brute_force_itertools, start_bnb_bruteforce, dijkstra, bellman_ford
 from utils import convert_matrix, convert_edge_list
 from io import retrieve_information_web, retrieve_information_file
 
@@ -40,7 +40,7 @@ def test_praktikum_2(arg):
         Reading and converting the graphs (web/file).
     """
     #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/G_10_20.txt'
-    input_file = 'graphs/G_10_200.txt'
+    input_file = 'graphs/G_1_2.txt'
     result = convert_edge_list(retrieve_information_file(input_file))
     #result = convert_edge_list(retrieve_information_web(graph_url))
 
@@ -128,9 +128,58 @@ def test_praktikum_4(arg):
         brute_force_itertools(result)
 
 
+def test_praktikum_5(arg):
+    """
+        Reading and converting the graphs (web/file).
+    """
+    graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/Wege1.txt'
+    #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/G_1_2.txt'
+    result = convert_edge_list(retrieve_information_web(graph_url))
+
+    # input_file = 'graphs/K_test.txt'
+    # result = convert_edge_list(retrieve_information_file(input_file))
+
+    if arg == 'dij':
+        """
+            Tests for Dijkstra-Algorithm
+        """
+        print "=" * 40
+        print "Dijkstra-Algorithm"
+        print "=" * 40
+        try:
+            dijkstra(result, int(sys.argv[2]))
+        except:
+            print 'Usage python tests.py <dij> <source>'
+
+    if arg == 'sp':
+        """
+            Tests for Shortest-Path (Source -> Target)
+        """
+        print "=" * 40
+        print "Shortest-Path (Source -> Target)"
+        print "=" * 40
+        try:
+            dijkstra(result, int(sys.argv[2]), int(sys.argv[3]))
+        except:
+            print 'Usage: python tests.py <sp> <start> <target>'
+
+    if arg == 'bell':
+        """
+            Tests for Bellman-Ford
+        """
+        print "=" * 40
+        print "Bellman-Ford"
+        print "=" * 40
+        try:
+            bellman_ford(result, int(sys.argv[2]))
+        except:
+            print 'Usage python tests.py <bell> <source>'
+
+
 if __name__ == '__main__':
     """
-        param arg contains the specified algorithm, e.g. 'kruskal'
+        sys.argv[1] should contain the specified algorithm, e.g. 'kruskal'.
+        sys.argv[1+n] should contain additional arguments, e.g. start node for dijkstra/bellman-ford.
     """
     try:
         arg = sys.argv[1]
@@ -140,4 +189,5 @@ if __name__ == '__main__':
     #test_praktikum_1()
     #test_praktikum_2(arg)
     #test_praktikum_3(arg)
-    test_praktikum_4(arg)
+    #test_praktikum_4(arg)
+    test_praktikum_5(arg)
