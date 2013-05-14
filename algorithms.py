@@ -362,13 +362,7 @@ def dijkstra(graph, start, end=None):
         print 'Path: ', path
         print 'Weight: ', path_sum
     else:
-        for node in graph.get_nodes():
-            path, path_sum = shortest_path(graph, pred, node)
-            print '#' * 50
-            print 'Path: ', path
-            print 'Weight: ', path_sum
-
-    get_shortest_path_tree(graph, pred, start)
+        get_shortest_path_tree(graph, pred, start)
 
 
 def bellman_ford(graph, start):
@@ -400,12 +394,6 @@ def bellman_ford(graph, start):
             print 'Negative cycle detected!'
             return
 
-    for node in graph.get_nodes():
-        path, path_sum = shortest_path(graph, pred, node)
-        print '#' * 50
-        print 'Path: ', path
-        print 'Weight: ', path_sum
-
     get_shortest_path_tree(graph, pred, start)
 
 
@@ -429,7 +417,7 @@ def get_shortest_path_tree(graph, pred, start):
     print ""
     print '-' * 40
     print "Startnode: ", start
-    print '-' * 40 
+    print '-' * 40
 
     next2 = next
     while True:
@@ -438,7 +426,7 @@ def get_shortest_path_tree(graph, pred, start):
         for e in pred:
             for f in next:
                 if pred[e] == f[1]:
-                    next2.append((f[1],e))
+                    next2.append((f[1], e))
                     visited.append(e)
         if len(next2) <= 0:
             break
