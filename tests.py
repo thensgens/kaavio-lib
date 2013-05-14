@@ -132,7 +132,7 @@ def test_praktikum_5(arg):
     """
         Reading and converting the graphs (web/file).
     """
-    graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/Wege3.txt'
+    graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/Wege1.txt'
     #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/G_1_2.txt'
     result = convert_edge_list(retrieve_information_web(graph_url))
 
