@@ -357,10 +357,18 @@ def dijkstra(graph, start, end=None):
     # if an end node was specified, the corresponding shortest path shall be
     # computed and displayed
     if end is not None:
-        shortest_path(graph, pred, end)
+        path, path_sum = shortest_path(graph, pred, end)
+        print '#' * 50
+        print 'Path: ', path
+        print 'Weight: ', path_sum
     else:
         for node in graph.get_nodes():
-            shortest_path(graph, pred, node)
+            path, path_sum = shortest_path(graph, pred, node)
+            print '#' * 50
+            print 'Path: ', path
+            print 'Weight: ', path_sum
+
+    get_shortest_path_tree(graph, pred, start)
 
 
 def bellman_ford(graph, start):
@@ -372,12 +380,14 @@ def bellman_ford(graph, start):
         pred[node] = None
     dist[start] = 0
 
+    optimized_nodelist = iterative_breadth_first_search(graph, start)
+
     # optimized main computation loop & cycle detection
     updated = False
     # main computation loop
     for idx in range(graph.get_node_count()):
         updated = False
-        for u in graph.get_nodes():
+        for u in optimized_nodelist:
             for v in graph.get_node_neighbours(u):
                 temp = float(graph.get_default_weights((u, v))[0])
                 if dist[u] + temp < dist[v]:
@@ -391,7 +401,12 @@ def bellman_ford(graph, start):
             return
 
     for node in graph.get_nodes():
-        shortest_path(graph, pred, node)
+        path, path_sum = shortest_path(graph, pred, node)
+        print '#' * 50
+        print 'Path: ', path
+        print 'Weight: ', path_sum
+
+    get_shortest_path_tree(graph, pred, start)
 
 
 def shortest_path(graph, pred, end):
@@ -403,6 +418,36 @@ def shortest_path(graph, pred, end):
         u = pred[u]
         path.insert(0, u)
 
-    print '#' * 50
-    print 'Pfad: ', path
-    print 'Weight: ', path_sum
+    return path, path_sum
+
+
+def get_shortest_path_tree(graph, pred, start):
+    start = int(start)
+    visited = [start]
+    next = [(None, start)]
+
+    print ""
+    print '-' * 40
+    print "Startnode: ", start
+    print '-' * 40 
+
+    next2 = next
+    while True:
+        next = next2
+        next2 = []
+        for e in pred:
+            for f in next:
+                if pred[e] == f[1]:
+                    next2.append((f[1],e))
+                    visited.append(e)
+        if len(next2) <= 0:
+            break
+        for ele in next2:
+            x, path_sum = shortest_path(graph, pred, ele[1])
+            print ele[0], "->", ele[1], "Cost from Startnode: ", path_sum
+        print '-' * 40
+
+    unvisited = set(pred.keys()) - set(visited)
+    if len(unvisited) > 0:
+        print "Unvisited", list(unvisited)
+        print '-' * 40
