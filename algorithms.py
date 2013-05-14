@@ -6,6 +6,7 @@ that can be performed on graphs.
 from heap import PriorityQueue
 from utils import make_graph_from_mst
 import itertools
+from graph import Graph
 
 
 def recursive_depth_first_search(graph, node, visited_nodes=[]):
@@ -365,6 +366,11 @@ def dijkstra(graph, start, end=None):
 
 
 def bellman_ford(graph, start):
+    # spt will contain the result-shortest-path-tree
+    spt = Graph(directed=True)
+    nodes = [(node, None) for node in graph.get_nodes()]
+    spt.add_nodes(*nodes)
+
     # initialize necessary data structures
     dist = {}
     pred = {}
@@ -373,25 +379,43 @@ def bellman_ford(graph, start):
         pred[node] = None
     dist[start] = 0
 
+    # optimized main computation loop & cycle detection
+    updated = False
     # main computation loop
-    for _ in range(graph.get_node_count() - 1):
+    for idx in range(graph.get_node_count()):
+        updated = False
         for u in graph.get_nodes():
             for v in graph.get_node_neighbours(u):
                 temp = float(graph.get_default_weights((u, v))[0])
                 if dist[u] + temp < dist[v]:
                     dist[v] = dist[u] + temp
                     pred[v] = u
+                    updated = True
+        if not updated:
+            break
+        if idx + 1 == graph.get_node_count():
+            print 'Negative cycle detected!'
 
-    # cycle detection
-    for u in graph.get_nodes():
-        for v in graph.get_node_neighbours(u):
-            temp = float(graph.get_default_weights((u, v))[0])
-            if dist[u] + temp < dist[v]:
-                print 'Negative cycle detected :('
+
+    # non-optimized main computation loop & cycle detection
+    # main computation loop
+    #for idx in range(graph.get_node_count() - 1):
+        #for u in graph.get_nodes():
+            #for v in graph.get_node_neighbours(u):
+                #temp = float(graph.get_default_weights((u, v))[0])
+                #if dist[u] + temp < dist[v]:
+                    #dist[v] = dist[u] + temp
+                    #pred[v] = u
+    ## cycle detection (non-optimized)
+    #for u in graph.get_nodes():
+        #for v in graph.get_node_neighbours(u):
+            #temp = float(graph.get_default_weights((u, v))[0])
+            #if dist[u] + temp < dist[v]:
+                #print 'Negative cycle detected :('
 
     print 'Startnode: ', start
     print 'predecessors: ', pred
-    print 'distances: ', dist
+    #print 'distances: ', dist
 
 
 def shortest_path(graph, pred, end):
