@@ -5,6 +5,8 @@ that can be performed on graphs.
 
 from heap import PriorityQueue
 from utils import make_graph_from_mst
+from graph import Graph
+from basegraph import EdgeProperty
 import itertools
 
 
@@ -439,3 +441,26 @@ def get_shortest_path_tree(graph, pred, start):
     if len(unvisited) > 0:
         print "Unvisited", list(unvisited)
         print '-' * 40
+
+
+def make_residual_graph(graph):
+    resGraph = Graph(directed=True)
+    for node in graph.get_nodes():
+        resGraph.add_nodes((node, None))
+
+    for edge in graph.get_edges():
+        maxCapa = float(graph.get_default_weights(edge)[0])
+        currentCapa = float(graph.get_default_weights(edge)[1])
+        backEdge = (edge[1], edge[0])
+
+        if currentCapa > 0:
+            atr = EdgeProperty(wgt=[currentCapa])
+            resGraph.add_edges([backEdge, atr])
+        if currentCapa < maxCapa:
+            atr = EdgeProperty(wgt=[maxCapa-currentCapa])
+            resGraph.add_edges([edge, atr])
+
+    return resGraph
+
+def ford_fulkerson(graph, source, target):
+    pass

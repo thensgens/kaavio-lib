@@ -1,5 +1,7 @@
 import sys
-from algorithms import get_coherent_components_count, kruskal, prim, nearest_neighbor, double_tree, brute_force_itertools, start_bnb_bruteforce, dijkstra, bellman_ford
+from graph import Graph
+from basegraph import EdgeProperty
+from algorithms import get_coherent_components_count, kruskal, prim, nearest_neighbor, double_tree, brute_force_itertools, start_bnb_bruteforce, dijkstra, bellman_ford, ford_fulkerson, make_residual_graph
 from utils import convert_matrix, convert_edge_list
 from io import retrieve_information_web, retrieve_information_file
 
@@ -175,6 +177,46 @@ def test_praktikum_5(arg):
         except:
             print 'Usage python tests.py <bell> <source>'
 
+def test_praktikum_6(arg):
+    """
+        Reading and converting the graphs (web/file).
+    """
+    graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/Fluss.txt'
+    #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/G_10_20.txt'
+    readIn = convert_edge_list(retrieve_information_web(graph_url))
+
+    result = Graph(directed=True)
+    for node in readIn.get_nodes():
+        result.add_nodes((node, None))
+    for edge in readIn.get_edges():
+        atr = EdgeProperty(wgt=[float(readIn.get_default_weights(edge)[0]), 0])
+        result.add_edges([edge, atr])
+
+    # input_file = 'graphs/K_test.txt'
+    # result = convert_edge_list(retrieve_information_file(input_file))
+
+    if arg == 'fofu':
+        """
+            Tests for Ford-Fulhkerson
+        """
+        print "=" * 40
+        print "Ford-Fulhkerson"
+        print "=" * 40
+        try:
+            ford_fulkerson(result, int(sys.argv[2]), int(sys.argv[3]))
+        except:
+            print 'Usage python tests.py <fofu> <source> <target>'
+
+    if arg == 'resitest':
+        """
+            Test for Residual Graph Creation
+        """
+        print "=" * 40
+        print "Test for Residual Graph Creation"
+        print "=" * 40
+
+        make_residual_graph(result)
+
 
 if __name__ == '__main__':
     """
@@ -190,4 +232,5 @@ if __name__ == '__main__':
     #test_praktikum_2(arg)
     #test_praktikum_3(arg)
     #test_praktikum_4(arg)
-    test_praktikum_5(arg)
+    #test_praktikum_5(arg)
+    test_praktikum_6(arg)
