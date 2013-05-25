@@ -19,7 +19,7 @@ def recursive_depth_first_search(graph, node, visited_nodes=[]):
     return visited_nodes
 
 
-def iterative_breadth_first_search(graph, node):
+def iterative_breadth_first_search(graph, node, target=None):
     queue = []
     visited_nodes = []
 
@@ -32,6 +32,8 @@ def iterative_breadth_first_search(graph, node):
         for neighbour in graph.get_node_neighbours(curr_element):
             if neighbour not in visited_nodes:
                 visited_nodes.append(neighbour)
+                if neighbour == target:
+                    return visited_nodes
                 queue.append(neighbour)
 
     return visited_nodes
@@ -463,4 +465,15 @@ def make_residual_graph(graph):
     return resGraph
 
 def ford_fulkerson(graph, source, target):
-    pass
+    work_graph = graph
+    flow = 0
+
+    while True:
+        res = make_residual_graph(work_graph)
+        meh = iterative_breadth_first_search(res, source, target)
+        print meh
+        #do magic to get new graph
+        #save flow
+        #generate res again until breath search breaks
+    
+    return flow
