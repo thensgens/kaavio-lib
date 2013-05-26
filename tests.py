@@ -181,8 +181,8 @@ def test_praktikum_6(arg):
     """
         Reading and converting the graphs (web/file).
     """
-    graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/Fluss.txt'
-    #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/G_10_20.txt'
+    #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/Fluss.txt'
+    graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/G_1_2.txt'
     readIn = convert_edge_list(retrieve_information_web(graph_url))
 
     result = Graph(directed=True)
@@ -202,10 +202,11 @@ def test_praktikum_6(arg):
         print "=" * 40
         print "Ford-Fulhkerson"
         print "=" * 40
-        try:
-            ford_fulkerson(result, int(sys.argv[2]), int(sys.argv[3]))
-        except:
-            print 'Usage python tests.py <fofu> <source> <target>'
+        ford_fulkerson(result, int(sys.argv[2]), int(sys.argv[3]))
+        #try:
+            #ford_fulkerson(result, int(sys.argv[2]), int(sys.argv[3]))
+        #except:
+            #print 'Usage python tests.py <fofu> <source> <target>'
 
     if arg == 'resitest':
         """

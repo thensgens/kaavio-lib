@@ -10,11 +10,12 @@ from basegraph import EdgeProperty
 import itertools
 
 
-def recursive_depth_first_search(graph, node, visited_nodes=[]):
+def recursive_depth_first_search(graph, node, visited_nodes=[], target=None):
     visited_nodes.append(node)
     for each in graph.get_node_neighbours(node):
         if each not in visited_nodes:
-            recursive_depth_first_search(graph, each, visited_nodes)
+            if target not in visited_nodes:
+                recursive_depth_first_search(graph, each, visited_nodes)
 
     return visited_nodes
 
@@ -362,9 +363,10 @@ def dijkstra(graph, start, end=None):
     # computed and displayed
     if end is not None:
         path, path_sum = shortest_path(graph, pred, end)
-        print '#' * 50
-        print 'Path: ', path
-        print 'Weight: ', path_sum
+        #print '#' * 50
+        #print 'Path: ', path
+        #print 'Weight: ', path_sum
+        return path
     else:
         get_shortest_path_tree(graph, pred, start)
 
@@ -461,19 +463,75 @@ def make_residual_graph(graph):
         if currentCapa < maxCapa:
             atr = EdgeProperty(wgt=[maxCapa-currentCapa])
             resGraph.add_edges([edge, atr])
-
+    print resGraph
     return resGraph
+
+
+def make_graph_from_residual(graph, path, gamma):
+    newGraph = Graph(directed=True)
+    for node in graph.get_nodes():
+        newGraph.add_nodes((node, None))
+
+    originalGraphEdges = graph.get_edges()
+    pathEdges = path
+
+    for e in originalGraphEdges:
+        edge_weight = graph.get_default_weights(e)
+        back_e = (e[1], e[0])
+
+        if e in pathEdges:
+            edge_weight[1] += gamma
+            atr = EdgeProperty(wgt=edge_weight)
+            newGraph.add_edges([e, atr])
+        elif back_e in pathEdges:
+            edge_weight[1] -= gamma
+            atr = EdgeProperty(wgt=edge_weight)
+            newGraph.add_edges([e, atr])
+        else:
+            atr = EdgeProperty(wgt=edge_weight)
+            newGraph.add_edges([e, atr])
+
+    return newGraph
+
+def make_path_from_search(resid, search):
+    #resid = graph
+    #search = nodelist
+
+    pass
 
 def ford_fulkerson(graph, source, target):
     work_graph = graph
-    flow = 0
 
+    #generate res again until breath search breaks
     while True:
-        res = make_residual_graph(work_graph)
-        meh = iterative_breadth_first_search(res, source, target)
-        print meh
-        #do magic to get new graph
-        #save flow
-        #generate res again until breath search breaks
-    
+        index = 0
+        edges = []
+        resid = make_residual_graph(work_graph)
+
+        #get gamma and path
+        #path = iterative_breadth_first_search(resid, source, target)
+        #search = recursive_depth_first_search(resid, source, [], target=target)
+        path = dijkstra(resid, source, target)
+        #if target not reachable, max flow found
+        #print search
+        if len(path) == 1 and target in path:
+            break
+        #path = make_path_from_search(resid, search)
+        print path
+
+
+        while index < len(path) - 1:
+            edges.append((path[index], path[index + 1]))
+            index += 1
+        gamma = min(edges, key=lambda edge: float(resid.get_default_weights(edge)[0]))
+        gamma = float(resid.get_default_weights(gamma)[0])
+
+        #make new flowgraph
+        work_graph = make_graph_from_residual(graph, edges, gamma)
+
+    #get flow
+    flow = 0
+    for node in work_graph.get_node_neighbours(source):
+        flow += float(graph.get_default_weights((source, node))[1])
+    print "Max-Flow =", flow
     return flow
