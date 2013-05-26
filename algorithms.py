@@ -26,13 +26,13 @@ def iterative_breadth_first_search(graph, node, target=None):
 
     # push the first node into the queue
     queue.append(node)
-    visited_nodes.append(node)
+    #visited_nodes.append(node)
 
     while queue:
         curr_element = queue.pop(0)
         for neighbour in graph.get_node_neighbours(curr_element):
             if neighbour not in visited_nodes:
-                visited_nodes.append(neighbour)
+                visited_nodes.append((curr_element, neighbour))
                 if neighbour == target:
                     return visited_nodes
                 queue.append(neighbour)
@@ -493,12 +493,6 @@ def make_graph_from_residual(graph, path, gamma):
 
     return newGraph
 
-def make_path_from_search(resid, search):
-    #resid = graph
-    #search = nodelist
-
-    pass
-
 def ford_fulkerson(graph, source, target):
     work_graph = graph
 
@@ -506,26 +500,21 @@ def ford_fulkerson(graph, source, target):
     while True:
         index = 0
         edges = []
+        path = []
         resid = make_residual_graph(work_graph)
 
         #get gamma and path
-        #path = iterative_breadth_first_search(resid, source, target)
-        #search = recursive_depth_first_search(resid, source, [], target=target)
-        path = dijkstra(resid, source, target)
-        #if target not reachable, max flow found
-        #print search
-        if len(path) == 1 and target in path:
-            break
-        #path = make_path_from_search(resid, search)
+        path = bfs(resid, source, target)
         print path
-
+        #target not reachable -> max flow found
+        if target not in path:
+            break
 
         while index < len(path) - 1:
             edges.append((path[index], path[index + 1]))
             index += 1
         gamma = min(edges, key=lambda edge: float(resid.get_default_weights(edge)[0]))
         gamma = float(resid.get_default_weights(gamma)[0])
-
         #make new flowgraph
         work_graph = make_graph_from_residual(graph, edges, gamma)
 
@@ -535,3 +524,24 @@ def ford_fulkerson(graph, source, target):
         flow += float(graph.get_default_weights((source, node))[1])
     print "Max-Flow =", flow
     return flow
+
+
+def backtrace(parent, start, end):
+    path = [end]
+    while path[-1] != start:
+        path.append(parent[path[-1]])
+    path.reverse()
+    return path
+
+
+def bfs(graph, start, end):
+    parent = {}
+    queue = []
+    queue.append(start)
+    while queue:
+        node = queue.pop(0)
+        if node == end:
+            return backtrace(parent, start, end)
+        for adjacent in graph.get_node_neighbours(node):
+            parent[adjacent] = node
+            queue.append(adjacent)
