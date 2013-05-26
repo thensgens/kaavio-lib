@@ -1,7 +1,7 @@
 import sys
 from graph import Graph
 from basegraph import EdgeProperty
-from algorithms import get_coherent_components_count, kruskal, prim, nearest_neighbor, double_tree, brute_force_itertools, start_bnb_bruteforce, dijkstra, bellman_ford, ford_fulkerson, make_residual_graph
+from algorithms import get_coherent_components_count, kruskal, prim, nearest_neighbor, double_tree, brute_force_itertools, start_bnb_bruteforce, dijkstra, bellman_ford, edmonds_karp, make_residual_graph
 from utils import convert_matrix, convert_edge_list
 from io import retrieve_information_web, retrieve_information_file
 
@@ -181,8 +181,8 @@ def test_praktikum_6(arg):
     """
         Reading and converting the graphs (web/file).
     """
-    graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/Fluss.txt'
-    #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/G_1_2.txt'
+    #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/Fluss.txt'
+    graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/G_1_2.txt'
     readIn = convert_edge_list(retrieve_information_web(graph_url))
 
     result = Graph(directed=True)
@@ -195,18 +195,14 @@ def test_praktikum_6(arg):
     # input_file = 'graphs/K_test.txt'
     # result = convert_edge_list(retrieve_information_file(input_file))
 
-    if arg == 'fofu':
+    if arg == 'ek':
         """
-            Tests for Ford-Fulhkerson
+            Tests for Edmonds-Karp
         """
         print "=" * 40
-        print "Ford-Fulhkerson"
+        print "Edmonds-Karp"
         print "=" * 40
-        ford_fulkerson(result, int(sys.argv[2]), int(sys.argv[3]))
-        #try:
-            #ford_fulkerson(result, int(sys.argv[2]), int(sys.argv[3]))
-        #except:
-            #print 'Usage python tests.py <fofu> <source> <target>'
+        edmonds_karp(result, int(sys.argv[2]), int(sys.argv[3]))
 
     if arg == 'resitest':
         """

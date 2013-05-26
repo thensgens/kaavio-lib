@@ -493,21 +493,18 @@ def make_graph_from_residual(graph, path, gamma):
 
     return newGraph
 
-def ford_fulkerson(graph, source, target):
+
+def edmonds_karp(graph, source, target):
     work_graph = graph
 
-    #generate res again until breath search breaks
     while True:
         index = 0
         edges = []
         path = []
         resid = make_residual_graph(work_graph)
 
-        #get gamma and path
         path = bfs(resid, source, target)
-        print path
-        #target not reachable -> max flow found
-        if target not in path:
+        if path is None:
             break
 
         while index < len(path) - 1:
@@ -515,10 +512,8 @@ def ford_fulkerson(graph, source, target):
             index += 1
         gamma = min(edges, key=lambda edge: float(resid.get_default_weights(edge)[0]))
         gamma = float(resid.get_default_weights(gamma)[0])
-        #make new flowgraph
         work_graph = make_graph_from_residual(graph, edges, gamma)
 
-    #get flow
     flow = 0
     for node in work_graph.get_node_neighbours(source):
         flow += float(graph.get_default_weights((source, node))[1])
@@ -528,6 +523,7 @@ def ford_fulkerson(graph, source, target):
 
 def backtrace(parent, start, end):
     path = [end]
+    print path
     while path[-1] != start:
         path.append(parent[path[-1]])
     path.reverse()
@@ -536,6 +532,7 @@ def backtrace(parent, start, end):
 
 def bfs(graph, start, end):
     parent = {}
+    visited = {node: False for node in graph.get_nodes()}
     queue = []
     queue.append(start)
     while queue:
@@ -543,5 +540,7 @@ def bfs(graph, start, end):
         if node == end:
             return backtrace(parent, start, end)
         for adjacent in graph.get_node_neighbours(node):
-            parent[adjacent] = node
-            queue.append(adjacent)
+            if not visited[adjacent]:
+                visited[adjacent] = True
+                parent[adjacent] = node
+                queue.append(adjacent)
