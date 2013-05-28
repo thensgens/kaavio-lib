@@ -181,8 +181,8 @@ def test_praktikum_6(arg):
     """
         Reading and converting the graphs (web/file).
     """
-    #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/Fluss.txt'
-    graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/G_1_2.txt'
+    graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/Fluss.txt'
+    #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/G_1_2.txt'
     readIn = convert_edge_list(retrieve_information_web(graph_url))
 
     result = Graph(directed=True)

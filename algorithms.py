@@ -463,7 +463,7 @@ def make_residual_graph(graph):
         if currentCapa < maxCapa:
             atr = EdgeProperty(wgt=[maxCapa-currentCapa])
             resGraph.add_edges([edge, atr])
-    print resGraph
+
     return resGraph
 
 
@@ -523,7 +523,6 @@ def edmonds_karp(graph, source, target):
 
 def backtrace(parent, start, end):
     path = [end]
-    print path
     while path[-1] != start:
         path.append(parent[path[-1]])
     path.reverse()
