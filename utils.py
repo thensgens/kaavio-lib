@@ -59,7 +59,7 @@ def convert_node_edge_list(node_edge_list):
     """
         Converts the input node/edge list
         used in p7 for KostenminimalX.txt
-        node = nodeNumber, wgt = [Balance]
+        node = nodeNumber, wgt = [Balance, Balance']
         edge = (from, to), wgt = [cost, MaxCapacity, CurrentCapacity]
     """
     result_graph = Graph(directed=True)
@@ -69,7 +69,8 @@ def convert_node_edge_list(node_edge_list):
     # populate the graph's node dict with node_balance
     input_list = []
     for i in range(node_count):
-        node_atr = NodeProperty(wgt=[float(parsed_graph[i+1][0])])
+        #wgt = Balance, Balance'
+        node_atr = NodeProperty(wgt=[float(parsed_graph[i+1][0]), 0])
         input_list.append((i, node_atr))
     result_graph.add_nodes(*input_list)
 

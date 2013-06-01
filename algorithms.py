@@ -9,7 +9,8 @@ from graph import Graph
 from basegraph import EdgeProperty
 import itertools
 
-#--- Praktikum 1 ---
+#--- P1 ---
+
 
 def recursive_depth_first_search(graph, node, visited_nodes=[], target=None):
     visited_nodes.append(node)
@@ -27,13 +28,13 @@ def iterative_breadth_first_search(graph, node, target=None):
 
     # push the first node into the queue
     queue.append(node)
-    #visited_nodes.append(node)
+    visited_nodes.append(node)
 
     while queue:
         curr_element = queue.pop(0)
         for neighbour in graph.get_node_neighbours(curr_element):
             if neighbour not in visited_nodes:
-                visited_nodes.append((curr_element, neighbour))
+                visited_nodes.append(neighbour)
                 if neighbour == target:
                     return visited_nodes
                 queue.append(neighbour)
@@ -62,7 +63,8 @@ def is_graph_coherent(graph, node):
     trav_result = recursive_depth_first_search(graph, node, [])
     return trav_result, len(trav_result) == graph.get_node_count()
 
-#--- Praktikum 2 ---
+#--- P2 ---
+
 
 def kruskal(graph):
     attrs = graph.edge_attr
@@ -121,7 +123,8 @@ def prim(graph, start_node):
     print "Prim Weight: ", mst_sum
     return mst
 
-#--- Praktikum 3 ---
+#--- P3 ---
+
 
 def nearest_neighbor(graph, node):
     current_node = node
@@ -165,7 +168,8 @@ def double_tree(graph):
     print "Tour: ", res_tour
     print "Cost: ", tour_weight
 
-#--- Praktikum 4 ---
+#--- P4 ---
+
 
 def start_bnb_bruteforce(graph, bnb=True):
     """
@@ -338,11 +342,13 @@ def brute_force_itertools(graph):
 
     print upper_bound
 
-#--- Praktikum 5 ---
+#--- P5 ---
+
 
 def dijkstra(graph, start, end=None):
     nodes = graph.get_nodes()
     # initialize distance dictionary
+
     dist = {node: float('Inf') for node in nodes}
     dist[start] = 0
     # initialize predecessor dictionary
@@ -376,7 +382,7 @@ def dijkstra(graph, start, end=None):
         get_shortest_path_tree(graph, pred, start)
 
 
-def bellman_ford(graph, start):
+def bellman_ford(graph, start, end=None):
     # initialize necessary data structures
     dist = {}
     pred = {}
@@ -403,9 +409,13 @@ def bellman_ford(graph, start):
             break
         if idx + 1 == graph.get_node_count():
             print 'Negative cycle detected!'
-            return
+            break
 
-    get_shortest_path_tree(graph, pred, start)
+    if end is not None:
+        path, path_sum = shortest_path(graph, pred, end)
+        return path
+    else:
+        get_shortest_path_tree(graph, pred, start)
 
 
 def shortest_path(graph, pred, end):
@@ -451,7 +461,8 @@ def get_shortest_path_tree(graph, pred, start):
         print "Unvisited", list(unvisited)
         print '-' * 40
 
-#--- Praktikum 6 ---
+#--- P6 ---
+
 
 def make_residual_graph(graph):
     resGraph = Graph(directed=True)
@@ -550,6 +561,128 @@ def bfs(graph, start, end):
                 parent[adjacent] = node
                 queue.append(adjacent)
 
-#--- Praktikum 7 ---
+#--- P7 ---
 
 
+def cycle_cancelling(graph):
+
+    pass
+
+
+def successive_shortest_path(graph):
+
+    working_graph = graph
+    #prepare graph and initilize balances
+    for edge in working_graph.get_edges():
+        if working_graph.get_default_weights(edge)[0] < 0:
+            working_graph.get_default_weights(edge)[2] = working_graph.get_default_weights(edge)[1]
+            working_graph.get_node_weights(edge[0])[1] += working_graph.get_default_weights(edge)[1]
+            working_graph.get_node_weights(edge[1])[1] -= working_graph.get_default_weights(edge)[1]
+ 
+    while True:
+        valid_source = []
+        valid_target = []
+        equal_nodes  = 0
+        result_path = None
+        resid_graph = None
+        pathEdges = []
+
+        for node in working_graph.get_nodes():
+            b = working_graph.get_node_weights(node)[0]
+            b_prime = working_graph.get_node_weights(node)[1]
+
+            #get valid sourcenodes
+            if b - b_prime > 0:
+                valid_source.append(node)
+
+            #get valid targetnodes
+            if b - b_prime < 0:
+                valid_target.append(node)
+
+            #count balanced nodes
+            if b == b_prime:
+                equal_nodes += 1
+
+        if equal_nodes == working_graph.get_node_count():
+            print "Cost Minimal"
+            break
+
+        if not valid_source or not valid_target:
+            print "No B"
+            break
+
+        #get shortest_path in resid graph
+        resid_graph = make_residual_graph_ssp(working_graph)
+
+        for source in valid_source:
+            for target in valid_target:
+                result_path = dijkstra(resid_graph, source, target)
+                #result_path = bellman_ford(resid_graph, source, target)
+                if result_path:
+                    break
+            if result_path:
+                break
+
+        if not result_path:
+            print "No Result -> No B"
+            break
+
+        #get gamma
+        for index in range(len(result_path)-1):
+            pathEdges.append((result_path[index], result_path[index + 1]))
+
+        minPathCost = min(pathEdges, key=lambda edge: resid_graph.get_default_weights(edge)[0])
+        minPathCost = resid_graph.get_default_weights(minPathCost)[0]
+
+        #b(s) - b'(s)
+        bS = working_graph.get_node_weights(result_path[0])[0] - working_graph.get_node_weights(result_path[0])[1]
+
+        #b'(t) - b(t)
+        bT = working_graph.get_node_weights(result_path[-1])[1] - working_graph.get_node_weights(result_path[-1])[0]
+
+        gamma = min(minPathCost, bS, bT)
+
+        #update graph
+        working_graph = update_graph_from_path_ssp(working_graph, pathEdges, gamma)
+
+    flow = 0
+    for edge in working_graph.get_edges():
+        flow += (working_graph.get_default_weights(edge)[2] * working_graph.get_default_weights(edge)[0])
+    print flow
+
+def make_residual_graph_ssp(graph):
+    resGraph = Graph(directed=True)
+    for node in graph.get_nodes():
+        resGraph.add_nodes((node, None))
+
+    for edge in graph.get_edges():
+        cost = graph.get_default_weights(edge)[0]
+        maxCapa = graph.get_default_weights(edge)[1]
+        currentCapa = graph.get_default_weights(edge)[2]
+        backEdge = (edge[1], edge[0])
+
+        if currentCapa > 0:
+            atr = EdgeProperty(wgt=[-cost, currentCapa])
+            resGraph.add_edges([backEdge, atr])
+        if currentCapa < maxCapa:
+            atr = EdgeProperty(wgt=[cost, maxCapa-currentCapa])
+            resGraph.add_edges([edge, atr])
+
+    return resGraph
+
+
+def update_graph_from_path_ssp(graph, path, gamma):
+    result = graph
+    for e in path:
+        back_e = (e[1], e[0])
+
+        if e in result.get_edges():
+            result.get_default_weights(e)[2] += gamma
+            result.get_node_weights(e[0])[1] += gamma
+            result.get_node_weights(e[1])[1] -= gamma
+        elif back_e in result.get_edges():
+            result.get_default_weights(back_e)[2] -= gamma
+            result.get_node_weights(back_e[0])[1] -= gamma
+            result.get_node_weights(back_e[1])[1] += gamma
+
+    return result
