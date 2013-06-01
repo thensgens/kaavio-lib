@@ -572,6 +572,7 @@ def cycle_cancelling(graph):
 
 
 def successive_shortest_path(graph):
+    retVal = 0
 
     working_graph = graph
     #prepare graph and initilize balances
@@ -580,11 +581,11 @@ def successive_shortest_path(graph):
             working_graph.get_default_weights(edge)[2] = working_graph.get_default_weights(edge)[1]
             working_graph.get_node_weights(edge[0])[1] += working_graph.get_default_weights(edge)[2]
             working_graph.get_node_weights(edge[1])[1] -= working_graph.get_default_weights(edge)[2]
- 
+
     while True:
         valid_source = []
         valid_target = []
-        equal_nodes  = 0
+        equal_nodes = 0
         result_path = None
         resid_graph = None
         pathEdges = []
@@ -607,10 +608,11 @@ def successive_shortest_path(graph):
 
         if equal_nodes == working_graph.get_node_count():
             print "Cost Minimal"
+            retVal = 1
             break
 
         if not valid_source or not valid_target:
-            print "No B"
+            print "No Result -> No B-Path"
             break
 
         #get shortest_path in resid graph
@@ -618,36 +620,25 @@ def successive_shortest_path(graph):
 
         for source in valid_source:
             for target in valid_target:
-                #result_path = dijkstra(resid_graph, source, target)
-                result_path = bellman_ford(resid_graph, source, target)
+                result_path = dijkstra(resid_graph, source, target)
+                #result_path = bellman_ford(resid_graph, source, target)
 
                 if result_path:
-                    pathEdges = []
-                    for index in range(len(result_path)-1):
-                        pathEdges.append((result_path[index], result_path[index + 1]))
-
-                    minPathCost = min(pathEdges, key=lambda edge: resid_graph.get_default_weights(edge)[0])
-                    minPathCost = resid_graph.get_default_weights(minPathCost)[0]
-
-                    #print result_path, minPathCost, bS, bT
-
-                if minPathCost != 0:
                     break
-                else:
-                    result_path = None
+
             if result_path:
                 break
 
-        if not result_path:
-            print "No Result -> No B"
+        if not result_path or len(result_path) < 2:
+            print "No Result -> No B-Path"
             break
 
         #get gamma
-        #for index in range(len(result_path)-1):
-        #    pathEdges.append((result_path[index], result_path[index + 1]))
+        for index in range(len(result_path)-1):
+            pathEdges.append((result_path[index], result_path[index + 1]))
 
-        #minPathCost = min(pathEdges, key=lambda edge: resid_graph.get_default_weights(edge)[0])
-        #minPathCost = resid_graph.get_default_weights(minPathCost)[0]
+        minPathCost = min(pathEdges, key=lambda edge: resid_graph.get_default_weights(edge)[1])
+        minPathCost = resid_graph.get_default_weights(minPathCost)[1]
 
         #b(s) - b'(s)
         bS = working_graph.get_node_weights(result_path[0])[0] - working_graph.get_node_weights(result_path[0])[1]
@@ -656,15 +647,16 @@ def successive_shortest_path(graph):
         bT = working_graph.get_node_weights(result_path[-1])[1] - working_graph.get_node_weights(result_path[-1])[0]
 
         gamma = min(minPathCost, bS, bT)
-        print result_path, minPathCost, bS, bT
 
         #update graph
         working_graph = update_graph_from_path_ssp(working_graph, pathEdges, gamma)
 
-    flow = 0
-    for edge in working_graph.get_edges():
-        flow += (working_graph.get_default_weights(edge)[2] * working_graph.get_default_weights(edge)[0])
-    print flow
+    if retVal == 1:
+        flow = 0
+        for edge in working_graph.get_edges():
+            flow += (working_graph.get_default_weights(edge)[2] * working_graph.get_default_weights(edge)[0])
+        print flow
+
 
 def make_residual_graph_ssp(graph):
     resGraph = Graph(directed=True)
@@ -700,12 +692,5 @@ def update_graph_from_path_ssp(graph, path, gamma):
             result.get_default_weights(back_e)[2] -= gamma
             result.get_node_weights(back_e[0])[1] -= gamma
             result.get_node_weights(back_e[1])[1] += gamma
-
-        # for node in result.get_nodes():
-        #     result.get_node_weights(node)[1] = 0
-
-        # for edge in result.get_edges():
-        #     result.get_node_weights(edge[0])[1] += result.get_default_weights(edge)[2]
-        #     result.get_node_weights(edge[1])[1] -= result.get_default_weights(edge)[2]
 
     return result
