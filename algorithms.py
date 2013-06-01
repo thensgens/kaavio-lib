@@ -420,11 +420,13 @@ def bellman_ford(graph, start, end=None):
 
 def shortest_path(graph, pred, end):
     path = [end]
+    visited = [end]
     u = end
     path_sum = 0
-    while pred[u] is not None:
+    while pred[u] is not None and pred[u] not in visited:
         path_sum += float(graph.get_default_weights((pred[u], u))[0])
         u = pred[u]
+        visited.append(u)
         path.insert(0, u)
 
     return path, path_sum
@@ -576,8 +578,8 @@ def successive_shortest_path(graph):
     for edge in working_graph.get_edges():
         if working_graph.get_default_weights(edge)[0] < 0:
             working_graph.get_default_weights(edge)[2] = working_graph.get_default_weights(edge)[1]
-            working_graph.get_node_weights(edge[0])[1] += working_graph.get_default_weights(edge)[1]
-            working_graph.get_node_weights(edge[1])[1] -= working_graph.get_default_weights(edge)[1]
+            working_graph.get_node_weights(edge[0])[1] += working_graph.get_default_weights(edge)[2]
+            working_graph.get_node_weights(edge[1])[1] -= working_graph.get_default_weights(edge)[2]
  
     while True:
         valid_source = []
@@ -616,10 +618,23 @@ def successive_shortest_path(graph):
 
         for source in valid_source:
             for target in valid_target:
-                result_path = dijkstra(resid_graph, source, target)
-                #result_path = bellman_ford(resid_graph, source, target)
+                #result_path = dijkstra(resid_graph, source, target)
+                result_path = bellman_ford(resid_graph, source, target)
+
                 if result_path:
+                    pathEdges = []
+                    for index in range(len(result_path)-1):
+                        pathEdges.append((result_path[index], result_path[index + 1]))
+
+                    minPathCost = min(pathEdges, key=lambda edge: resid_graph.get_default_weights(edge)[0])
+                    minPathCost = resid_graph.get_default_weights(minPathCost)[0]
+
+                    #print result_path, minPathCost, bS, bT
+
+                if minPathCost != 0:
                     break
+                else:
+                    result_path = None
             if result_path:
                 break
 
@@ -628,11 +643,11 @@ def successive_shortest_path(graph):
             break
 
         #get gamma
-        for index in range(len(result_path)-1):
-            pathEdges.append((result_path[index], result_path[index + 1]))
+        #for index in range(len(result_path)-1):
+        #    pathEdges.append((result_path[index], result_path[index + 1]))
 
-        minPathCost = min(pathEdges, key=lambda edge: resid_graph.get_default_weights(edge)[0])
-        minPathCost = resid_graph.get_default_weights(minPathCost)[0]
+        #minPathCost = min(pathEdges, key=lambda edge: resid_graph.get_default_weights(edge)[0])
+        #minPathCost = resid_graph.get_default_weights(minPathCost)[0]
 
         #b(s) - b'(s)
         bS = working_graph.get_node_weights(result_path[0])[0] - working_graph.get_node_weights(result_path[0])[1]
@@ -641,6 +656,7 @@ def successive_shortest_path(graph):
         bT = working_graph.get_node_weights(result_path[-1])[1] - working_graph.get_node_weights(result_path[-1])[0]
 
         gamma = min(minPathCost, bS, bT)
+        print result_path, minPathCost, bS, bT
 
         #update graph
         working_graph = update_graph_from_path_ssp(working_graph, pathEdges, gamma)
@@ -684,5 +700,12 @@ def update_graph_from_path_ssp(graph, path, gamma):
             result.get_default_weights(back_e)[2] -= gamma
             result.get_node_weights(back_e[0])[1] -= gamma
             result.get_node_weights(back_e[1])[1] += gamma
+
+        # for node in result.get_nodes():
+        #     result.get_node_weights(node)[1] = 0
+
+        # for edge in result.get_edges():
+        #     result.get_node_weights(edge[0])[1] += result.get_default_weights(edge)[2]
+        #     result.get_node_weights(edge[1])[1] -= result.get_default_weights(edge)[2]
 
     return result
