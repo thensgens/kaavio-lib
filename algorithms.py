@@ -9,6 +9,7 @@ from graph import Graph
 from basegraph import EdgeProperty
 import itertools
 
+#--- Praktikum 1 ---
 
 def recursive_depth_first_search(graph, node, visited_nodes=[], target=None):
     visited_nodes.append(node)
@@ -61,6 +62,7 @@ def is_graph_coherent(graph, node):
     trav_result = recursive_depth_first_search(graph, node, [])
     return trav_result, len(trav_result) == graph.get_node_count()
 
+#--- Praktikum 2 ---
 
 def kruskal(graph):
     attrs = graph.edge_attr
@@ -119,6 +121,7 @@ def prim(graph, start_node):
     print "Prim Weight: ", mst_sum
     return mst
 
+#--- Praktikum 3 ---
 
 def nearest_neighbor(graph, node):
     current_node = node
@@ -162,6 +165,7 @@ def double_tree(graph):
     print "Tour: ", res_tour
     print "Cost: ", tour_weight
 
+#--- Praktikum 4 ---
 
 def start_bnb_bruteforce(graph, bnb=True):
     """
@@ -334,6 +338,7 @@ def brute_force_itertools(graph):
 
     print upper_bound
 
+#--- Praktikum 5 ---
 
 def dijkstra(graph, start, end=None):
     nodes = graph.get_nodes()
@@ -446,6 +451,7 @@ def get_shortest_path_tree(graph, pred, start):
         print "Unvisited", list(unvisited)
         print '-' * 40
 
+#--- Praktikum 6 ---
 
 def make_residual_graph(graph):
     resGraph = Graph(directed=True)
@@ -543,3 +549,7 @@ def bfs(graph, start, end):
                 visited[adjacent] = True
                 parent[adjacent] = node
                 queue.append(adjacent)
+
+#--- Praktikum 7 ---
+
+

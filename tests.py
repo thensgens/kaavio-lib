@@ -2,7 +2,7 @@ import sys
 from graph import Graph
 from basegraph import EdgeProperty
 from algorithms import get_coherent_components_count, kruskal, prim, nearest_neighbor, double_tree, brute_force_itertools, start_bnb_bruteforce, dijkstra, bellman_ford, edmonds_karp, make_residual_graph
-from utils import convert_matrix, convert_edge_list
+from utils import convert_matrix, convert_edge_list, convert_node_edge_list
 from io import retrieve_information_web, retrieve_information_file
 
 
@@ -214,6 +214,34 @@ def test_praktikum_6(arg):
 
         make_residual_graph(result)
 
+def test_praktikum_7(arg):
+    """
+        Reading and converting the graphs (web/file).
+    """
+    graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/Kostenminimal5.txt'
+    #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/Kostenminimal100_1.txt'
+    #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/Kostenminimal100_2.txt'
+    convert_node_edge_list(retrieve_information_web(graph_url))
+
+    # input_file = 'graphs/K_test.txt'
+    # result = convert_edge_list(retrieve_information_file(input_file))
+
+    if arg == 'cc':
+        """
+            Tests for Cycle-Cancelling
+        """
+        print "=" * 40
+        print "Cycle-Cancelling"
+        print "=" * 40
+
+    if arg == 'ssp':
+        """
+            Test for Successive Shortest-Path
+        """
+        print "=" * 40
+        print "Test for Successive Shortest-Path"
+        print "=" * 40
+
 
 if __name__ == '__main__':
     """
@@ -230,4 +258,5 @@ if __name__ == '__main__':
     #test_praktikum_3(arg)
     #test_praktikum_4(arg)
     #test_praktikum_5(arg)
-    test_praktikum_6(arg)
+    #test_praktikum_6(arg)
+    test_praktikum_7(arg)
