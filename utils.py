@@ -60,7 +60,7 @@ def convert_node_edge_list(node_edge_list):
         Converts the input node/edge list
         used in p7 for KostenminimalX.txt
         node = nodeNumber, wgt = [Balance, Balance']
-        edge = (from, to), wgt = [cost, MaxCapacity, CurrentCapacity]
+        edge = (from, to), wgt = [cost, capacity, flow]
     """
     result_graph = Graph(directed=True)
     parsed_graph = [tuple(entry.strip(' \r\n').split('\t')) for entry in node_edge_list]

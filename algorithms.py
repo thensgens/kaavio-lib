@@ -9,8 +9,6 @@ from graph import Graph
 from basegraph import EdgeProperty
 import itertools
 
-#--- P1 ---
-
 
 def recursive_depth_first_search(graph, node, visited_nodes=[], target=None):
     visited_nodes.append(node)
@@ -62,8 +60,6 @@ def get_coherent_components_count(graph):
 def is_graph_coherent(graph, node):
     trav_result = recursive_depth_first_search(graph, node, [])
     return trav_result, len(trav_result) == graph.get_node_count()
-
-#--- P2 ---
 
 
 def kruskal(graph):
@@ -123,8 +119,6 @@ def prim(graph, start_node):
     print "Prim Weight: ", mst_sum
     return mst
 
-#--- P3 ---
-
 
 def nearest_neighbor(graph, node):
     current_node = node
@@ -167,8 +161,6 @@ def double_tree(graph):
 
     print "Tour: ", res_tour
     print "Cost: ", tour_weight
-
-#--- P4 ---
 
 
 def start_bnb_bruteforce(graph, bnb=True):
@@ -342,8 +334,6 @@ def brute_force_itertools(graph):
 
     print upper_bound
 
-#--- P5 ---
-
 
 def dijkstra(graph, start, end=None):
     nodes = graph.get_nodes()
@@ -463,8 +453,6 @@ def get_shortest_path_tree(graph, pred, start):
         print "Unvisited", list(unvisited)
         print '-' * 40
 
-#--- P6 ---
-
 
 def make_residual_graph(graph):
     resGraph = Graph(directed=True)
@@ -563,11 +551,8 @@ def bfs(graph, start, end):
                 parent[adjacent] = node
                 queue.append(adjacent)
 
-#--- P7 ---
-
 
 def cycle_cancelling(graph):
-
     pass
 
 
@@ -619,22 +604,20 @@ def successive_shortest_path(graph):
         resid_graph = make_residual_graph_ssp(working_graph)
 
         for source in valid_source:
-            for target in valid_target:
-                result_path = dijkstra(resid_graph, source, target)
-                #result_path = bellman_ford(resid_graph, source, target)
-
-                if result_path:
-                    break
-
             if result_path:
                 break
+            for target in valid_target:
+                #result_path = dijkstra(resid_graph, source, target)
+                result_path = bellman_ford(resid_graph, source, target)
+                if result_path:
+                    break
 
         if not result_path or len(result_path) < 2:
             print "No Result -> No B-Path"
             break
 
         #get gamma
-        for index in range(len(result_path)-1):
+        for index in range(len(result_path) - 1):
             pathEdges.append((result_path[index], result_path[index + 1]))
 
         minPathCost = min(pathEdges, key=lambda edge: resid_graph.get_default_weights(edge)[1])
@@ -642,10 +625,9 @@ def successive_shortest_path(graph):
 
         #b(s) - b'(s)
         bS = working_graph.get_node_weights(result_path[0])[0] - working_graph.get_node_weights(result_path[0])[1]
-
         #b'(t) - b(t)
         bT = working_graph.get_node_weights(result_path[-1])[1] - working_graph.get_node_weights(result_path[-1])[0]
-
+        #determine the minimum here
         gamma = min(minPathCost, bS, bT)
 
         #update graph
@@ -665,15 +647,15 @@ def make_residual_graph_ssp(graph):
 
     for edge in graph.get_edges():
         cost = graph.get_default_weights(edge)[0]
-        maxCapa = graph.get_default_weights(edge)[1]
-        currentCapa = graph.get_default_weights(edge)[2]
+        capacity = graph.get_default_weights(edge)[1]
+        flow = graph.get_default_weights(edge)[2]
         backEdge = (edge[1], edge[0])
 
-        if currentCapa > 0:
-            atr = EdgeProperty(wgt=[-cost, currentCapa])
+        if flow > 0:
+            atr = EdgeProperty(wgt=[-cost, flow])
             resGraph.add_edges([backEdge, atr])
-        if currentCapa < maxCapa:
-            atr = EdgeProperty(wgt=[cost, maxCapa-currentCapa])
+        if flow < capacity:
+            atr = EdgeProperty(wgt=[cost, capacity - flow])
             resGraph.add_edges([edge, atr])
 
     return resGraph
