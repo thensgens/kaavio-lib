@@ -399,6 +399,8 @@ def bellman_ford(graph, start, end=None):
             break
         if idx + 1 == graph.get_node_count():
             print 'Negative cycle detected!'
+            path, path_sum = shortest_path(graph, pred, end)
+            print path 
             break
 
     if end is not None:
@@ -525,7 +527,7 @@ def edmonds_karp(graph, source, target):
     for node in work_graph.get_node_neighbours(source):
         flow += float(graph.get_default_weights((source, node))[1])
     print "Max-Flow =", flow
-    return flow
+    return work_graph
 
 
 def backtrace(parent, start, end):
@@ -553,7 +555,44 @@ def bfs(graph, start, end):
 
 
 def cycle_cancelling(graph):
+    work_graph = initialize_b_flow(graph)
+
+
     pass
+
+
+def initialize_b_flow(graph):
+    b_graph = Graph(directed=True)
+    for node in graph.get_nodes():
+        b_graph.add_nodes((node, None))
+    for edge in graph.get_edges():
+        flow = graph.get_default_weights(edge)[1]
+        atr = EdgeProperty(wgt=[flow, 0])
+        b_graph.add_edges([edge, atr])
+
+    super_source = graph.get_node_count()
+    super_target = graph.get_node_count() + 1
+    b_graph.add_nodes((super_source, None))
+    b_graph.add_nodes((super_target, None))
+
+    #generate b-flow
+    for node in graph.get_nodes():
+        b = graph.get_node_weights(node)[0]
+
+        if b > 0:
+            atr = EdgeProperty(wgt=[b, 0])
+            b_graph.add_edges([(super_source, node), atr])
+        if b < 0:
+            atr = EdgeProperty(wgt=[-b, 0])
+            b_graph.add_edges([(node, super_target), atr])
+
+    ek_graph = edmonds_karp(b_graph, super_source, super_target)
+
+    flow_graph = graph
+    for edge in graph.get_edges():
+        flow_graph.get_default_weights(edge)[2] = ek_graph.get_default_weights(edge)[1]
+
+    return flow_graph
 
 
 def successive_shortest_path(graph):
