@@ -399,8 +399,6 @@ def bellman_ford(graph, start, end=None):
             break
         if idx + 1 == graph.get_node_count():
             print 'Negative cycle detected!'
-            path, path_sum = shortest_path(graph, pred, end)
-            print path 
             break
 
     if end is not None:
@@ -557,8 +555,31 @@ def bfs(graph, start, end):
 def cycle_cancelling(graph):
     work_graph = initialize_b_flow(graph)
 
+    while True:
+        cycle_edges = []
+        resid_graph = make_residual_graph_ssp(work_graph)
 
-    pass
+        #get negative cycle
+        neg_cycle = bellman_ford(resid_graph, 0)
+        if not neg_cycle:
+            print "Done"
+            break
+
+        #augment work_graph with neg_cycle and gamma
+        for index in range(len(neg_cycle) - 1):
+            cycle_edges.append((neg_cycle[index], neg_cycle[index + 1]))
+
+        gamma = min(cycle_edges, key=lambda edge: resid_graph.get_default_weights(edge)[1])
+        gamma = resid_graph.get_default_weights(gamma)[1]
+
+        for edge in cycle_edges:
+            work_graph.get_default_weights(edge)[2] += gamma
+
+    flow = 0
+    for edge in working_graph.get_edges():
+        flow += (working_graph.get_default_weights(edge)[2] * working_graph.get_default_weights(edge)[0])
+    print flow
+
 
 
 def initialize_b_flow(graph):
