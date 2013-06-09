@@ -31,6 +31,10 @@ class BaseGraph(object):
     def get_node_weights(self, node):
         return self.node_attr[node].weight
 
+    def remove_edge(self, edge):
+        if self.edge_attr[edge]:
+            self.edge_attr.pop(edge)
+
 
 class BaseProperty(object):
 
