@@ -6,7 +6,7 @@ that can be performed on graphs.
 from heap import PriorityQueue
 from utils import make_graph_from_mst
 from graph import Graph
-from basegraph import EdgeProperty
+from basegraph import EdgeProperty, NodeProperty
 import itertools
 
 
@@ -356,7 +356,7 @@ def dijkstra(graph, start, end=None):
             if nodes_nonfinal.contains_task(adj):
                 temp = dist[u] + float(graph.get_default_weights((u, adj))[0])
                 if temp < dist[adj]:
-                    dist[adj] = temp
+
                     pred[adj] = u
                     nodes_nonfinal.add_task(task=adj, priority=temp)
 
@@ -418,9 +418,9 @@ def bellman_ford(graph, start, end=None, neg_cycle_detect=False):
 
 def get_cycle_nodes(graph, pred, res_cycle_node):
     cycle_nodes = []
-    if res_cycle_node:
+    if res_cycle_node is not None:
         # inner cycle
-        for idx in xrange(graph.get_node_count):
+        for idx in xrange(graph.get_node_count()):
             res_cycle_node = pred[res_cycle_node]
         current_cycle_node = pred[res_cycle_node]
         while current_cycle_node != res_cycle_node:
@@ -476,14 +476,14 @@ def get_shortest_path_tree(graph, pred, start):
         print '-' * 40
 
 
-def make_residual_graph(graph):
+def make_residual_graph(graph, cap_index=0, flow_index=1):
     resGraph = Graph(directed=True)
     for node in graph.get_nodes():
         resGraph.add_nodes((node, None))
 
     for edge in graph.get_edges():
-        maxCapa = float(graph.get_default_weights(edge)[0])
-        currentCapa = float(graph.get_default_weights(edge)[1])
+        maxCapa = float(graph.get_default_weights(edge)[cap_index])
+        currentCapa = float(graph.get_default_weights(edge)[flow_index])
         backEdge = (edge[1], edge[0])
 
         if currentCapa > 0:
@@ -499,7 +499,8 @@ def make_residual_graph(graph):
 def make_graph_from_residual(graph, path, gamma):
     newGraph = Graph(directed=True)
     for node in graph.get_nodes():
-        newGraph.add_nodes((node, None))
+        prop = NodeProperty(wgt=[graph.get_node_weights(node)[0]])
+        newGraph.add_nodes((node, prop))
 
     originalGraphEdges = graph.get_edges()
     pathEdges = path
@@ -509,11 +510,11 @@ def make_graph_from_residual(graph, path, gamma):
         back_e = (e[1], e[0])
 
         if e in pathEdges:
-            edge_weight[1] += gamma
+            edge_weight[2] += gamma
             atr = EdgeProperty(wgt=edge_weight)
             newGraph.add_edges([e, atr])
         elif back_e in pathEdges:
-            edge_weight[1] -= gamma
+            edge_weight[2] -= gamma
             atr = EdgeProperty(wgt=edge_weight)
             newGraph.add_edges([e, atr])
         else:
@@ -523,14 +524,14 @@ def make_graph_from_residual(graph, path, gamma):
     return newGraph
 
 
-def edmonds_karp(graph, source, target):
+def edmonds_karp(graph, source, target, cap_index=0, flow_index=1):
     work_graph = graph
 
     while True:
         index = 0
         edges = []
         path = []
-        resid = make_residual_graph(work_graph)
+        resid = make_residual_graph(work_graph, cap_index, flow_index)
 
         path = bfs(resid, source, target)
         if path is None:
@@ -546,7 +547,6 @@ def edmonds_karp(graph, source, target):
     flow = 0
     for node in work_graph.get_node_neighbours(source):
         flow += float(graph.get_default_weights((source, node))[1])
-    print "Max-Flow =", flow
     return work_graph
 
 
@@ -607,13 +607,15 @@ def cycle_cancelling(graph):
     result_flow_cost = 0.
 
     for edge in graph.get_edges():
-       edge_weight_obj = graph.get_default_weights(edge)
-       # set the initial flow to 0.
-       edge_weight_obj[2] = 0.
+        edge_weight_obj = graph.get_default_weights(edge)
+        # set the initial flow to 0.
+        edge_weight_obj[2] = 0.
 
     # create s* (super source) and t* (super target)
-    ss = graph.get_node_count()
-    ts = graph.get_node_count() + 1
+    #ss = graph.get_node_count()
+    #ts = graph.get_node_count() + 1
+    ss = -1
+    ts = -2
 
     s_list, t_list = [], []
     # if node A's balance is > 0 => edge (s*, A)
@@ -626,8 +628,8 @@ def cycle_cancelling(graph):
 
     # STEP 1: create b-flow
     # add s* and t* to the graph (balance is infinity)
-    graph.add_nodes([ss, float('Inf')])
-    graph.add_nodes([ts, float('Inf')])
+    graph.add_nodes([ss, NodeProperty(wgt=[float('Inf')])])
+    graph.add_nodes([ts, NodeProperty(wgt=[float('Inf')])])
 
     # add all edges due to the creation of s* and t*
     for s in s_list:
@@ -637,49 +639,47 @@ def cycle_cancelling(graph):
         edge_prop = EdgeProperty(wgt=[0., graph.get_node_weights(t)[0] * -1, 0.])
         graph.add_edges([(t, ts), edge_prop])
 
-    print "Before edmonds-karp: ", graph.get_edges()
-
     # compute the maximal flow from s* to t*
-    graph = edmonds_karp(graph, ss, ts)
-    for u in graph.get_nodes():
-        for v in graph.get_node_neighbours(u):
-            obj = graph.get_default_weights((u, v))
-            print (u, v), " ==> ", obj[0], obj[1], obj[2]
+    graph = edmonds_karp(graph, ss, ts, cap_index=1, flow_index=2)
 
     b_flow = True
     for s in s_list:
-        edge_weight_obj = graph.get_default_weights((ss, s))
-        #print edge_weight_obj[2], edge_weight_obj[1]
-        if edge_weight_obj[2] != edge_weight_obj[1]:
+        edge_obj = graph.get_default_weights((ss, s))
+        if edge_obj[2] != edge_obj[1]:
             b_flow = False
-        # now we have to remove the s* to s_x edges
         graph.remove_edge((ss, s))
+
     for t in t_list:
-        edge_weight_obj = graph.get_default_weights((t, ts))
-        #print edge_weight_obj[2], edge_weight_obj[1]
-        if edge_weight_obj[2] != edge_weight_obj[1]:
+        edge_obj = graph.get_default_weights((t, ts))
+        if edge_obj[2] != edge_obj[1]:
             b_flow = False
-        # now we have to remove the t* to t_x edges
         graph.remove_edge((t, ts))
+
+    if not b_flow:
+        print "Error. No b-Flow!"
+        return
+
+    #balance_sum = 0
+    #for n in graph.get_nodes():
+        #if n != -1 and n != -2:
+            #balance_sum += graph.get_node_weights(n)[0]
+    #if balance_sum != 0:
+        #print "No B-Flow."
+        #return
 
     # remove s* and t* from the graph
     graph.remove_node(ss)
     graph.remove_node(ts)
-
-    # if there's no b-flow => STOP and return flow cost
-    if not b_flow:
-        print "No B-Flow."
-        return
 
     # STEP 2-4
     while True:
         resid, back_edges = make_residual_graph_ssp(graph)
 
         # step 3 here
-        cycle_nodes = bellman_ford(graph, start=0, neg_cycle_detect=True)
+        cycle_nodes = bellman_ford(resid, start=0, neg_cycle_detect=True)
 
         # if no negative cycle was found (empty list) -> STOP.
-        if not cycle_nodes:
+        if len(cycle_nodes) <= 2:
             result_flow_cost = get_flow_cost(graph)
             break
 
@@ -700,6 +700,7 @@ def cycle_cancelling(graph):
                     orig_edge_obj = graph.get_default_weights((n1, n2))
                     orig_edge_obj[2] = orig_edge_obj[2] + min_cap
 
+    print result_flow_cost
     return result_flow_cost
 
 

@@ -33,7 +33,6 @@ class Graph(BaseGraph):
     def add_node_neighbours(self, edge):
         src, dest = edge[0], edge[1]
         if src not in self.__node_adj_list or dest not in self.__node_adj_list:
-            print src, dest
             raise NodeNotInGraph()
         else:
             self.__node_adj_list[src].append(dest)
@@ -53,6 +52,8 @@ class Graph(BaseGraph):
                     self.__node_adj_list[u].remove(v)
         if self.__node_adj_list[node] is not None:
             self.__node_adj_list.pop(node)
+        if self.node_attr[node] is not None:
+            self.node_attr.pop(node)
 
     def get_node_neighbours(self, node):
         return self.__node_adj_list[node]

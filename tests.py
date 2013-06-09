@@ -219,8 +219,9 @@ def test_praktikum_7(arg):
         Reading and converting the graphs (web/file).
     """
     graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/Kostenminimal5.txt'
-    #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/Kostenminimal100_1.txt'
+    graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/Kostenminimal100_1.txt'
     #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/Kostenminimal100_2.txt'
+    #graph_url = 'http://www.hoever.fh-aachen.de/webDateien/mmi/Grafen/Kostenminimal100_3.txt'
     result = convert_node_edge_list(retrieve_information_web(graph_url))
 
     # input_file = 'graphs/K_test.txt'
