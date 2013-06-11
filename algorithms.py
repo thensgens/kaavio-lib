@@ -575,35 +575,6 @@ def bfs(graph, start, end):
                 queue.append(adjacent)
 
 
-#def cycle_cancelling(graph):
-    #work_graph = initialize_b_flow(graph)
-
-    #while True:
-        #cycle_edges = []
-        #resid_graph, _ = make_residual_graph_ssp(work_graph)
-
-        ##get negative cycle
-        #neg_cycle = bellman_ford(resid_graph, 0)
-        #if not neg_cycle:
-            #print "Done"
-            #break
-
-        ##augment work_graph with neg_cycle and gamma
-        #for index in range(len(neg_cycle) - 1):
-            #cycle_edges.append((neg_cycle[index], neg_cycle[index + 1]))
-
-        #gamma = min(cycle_edges, key=lambda edge: resid_graph.get_default_weights(edge)[1])
-        #gamma = resid_graph.get_default_weights(gamma)[1]
-
-        #for edge in cycle_edges:
-            #work_graph.get_default_weights(edge)[2] += gamma
-
-    #flow = 0
-    #for edge in working_graph.get_edges():
-        #flow += (working_graph.get_default_weights(edge)[2] * working_graph.get_default_weights(edge)[0])
-    #print flow
-
-
 def cycle_cancelling(graph):
     """
         get_default_weights:
@@ -661,14 +632,6 @@ def cycle_cancelling(graph):
     if not b_flow:
         print "Error. No b-Flow!"
         return
-
-    #balance_sum = 0
-    #for n in graph.get_nodes():
-        #if n != -1 and n != -2:
-            #balance_sum += graph.get_node_weights(n)[0]
-    #if balance_sum != 0:
-        #print "No B-Flow."
-        #return
 
     # remove s* and t* from the graph
     graph.remove_node(ss)
@@ -730,40 +693,6 @@ def get_min_resid_cap(resid, cycle_nodes):
                 min_cap = edge_weight_obj[1]
 
     return min_cap
-
-
-#def initialize_b_flow(graph):
-    #b_graph = Graph(directed=True)
-    #for node in graph.get_nodes():
-        #b_graph.add_nodes((node, None))
-    #for edge in graph.get_edges():
-        #flow = graph.get_default_weights(edge)[1]
-        #atr = EdgeProperty(wgt=[flow, 0])
-        #b_graph.add_edges([edge, atr])
-
-    #super_source = graph.get_node_count()
-    #super_target = graph.get_node_count() + 1
-    #b_graph.add_nodes((super_source, None))
-    #b_graph.add_nodes((super_target, None))
-
-    ##generate b-flow
-    #for node in graph.get_nodes():
-        #b = graph.get_node_weights(node)[0]
-
-        #if b > 0:
-            #atr = EdgeProperty(wgt=[b, 0])
-            #b_graph.add_edges([(super_source, node), atr])
-        #if b < 0:
-            #atr = EdgeProperty(wgt=[-b, 0])
-            #b_graph.add_edges([(node, super_target), atr])
-
-    #ek_graph = edmonds_karp(b_graph, super_source, super_target)
-
-    #flow_graph = graph
-    #for edge in graph.get_edges():
-        #flow_graph.get_default_weights(edge)[2] = ek_graph.get_default_weights(edge)[1]
-
-    #return flow_graph
 
 
 def successive_shortest_path(graph):
