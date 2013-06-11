@@ -586,8 +586,6 @@ def cycle_cancelling(graph):
     result_flow_cost = 0.
 
     # create s* (super source) and t* (super target)
-    #ss = graph.get_node_count()
-    #ts = graph.get_node_count() + 1
     ss = -1
     ts = -2
 
@@ -656,18 +654,17 @@ def cycle_cancelling(graph):
 
         # step 4 here
         min_cap = get_min_resid_cap(resid, cycle_nodes)
-        if len(cycle_nodes) > 1:
-            for idx in xrange(1, len(cycle_nodes)):
-                n1 = cycle_nodes[idx - 1]
-                n2 = cycle_nodes[idx]
-                resid_edge_obj = resid.get_default_weights((n1, n2))
+        for idx in xrange(1, len(cycle_nodes)):
+            n1 = cycle_nodes[idx - 1]
+            n2 = cycle_nodes[idx]
+            resid_edge_obj = resid.get_default_weights((n1, n2))
 
-                if back_edges[(n1, n2)]:
-                    orig_edge_obj = graph.get_default_weights((n2, n1))
-                    orig_edge_obj[2] = orig_edge_obj[2] - min_cap
-                else:
-                    orig_edge_obj = graph.get_default_weights((n1, n2))
-                    orig_edge_obj[2] = orig_edge_obj[2] + min_cap
+            if back_edges[(n1, n2)]:
+                orig_edge_obj = graph.get_default_weights((n2, n1))
+                orig_edge_obj[2] = orig_edge_obj[2] - min_cap
+            else:
+                orig_edge_obj = graph.get_default_weights((n1, n2))
+                orig_edge_obj[2] = orig_edge_obj[2] + min_cap
 
     print result_flow_cost
     return result_flow_cost
@@ -684,13 +681,13 @@ def get_flow_cost(graph):
 
 def get_min_resid_cap(resid, cycle_nodes):
     min_cap = float('Inf')
-    if len(cycle_nodes) > 1:
-        for i in xrange(1, len(cycle_nodes)):
-            n1 = cycle_nodes[i - 1]
-            n2 = cycle_nodes[i]
-            edge_weight_obj = resid.get_default_weights((n1, n2))
-            if edge_weight_obj and edge_weight_obj[1] < min_cap:
-                min_cap = edge_weight_obj[1]
+    #if len(cycle_nodes) > 1:
+    for i in xrange(1, len(cycle_nodes)):
+        n1 = cycle_nodes[i - 1]
+        n2 = cycle_nodes[i]
+        edge_weight_obj = resid.get_default_weights((n1, n2))
+        if edge_weight_obj and edge_weight_obj[1] < min_cap:
+            min_cap = edge_weight_obj[1]
 
     return min_cap
 

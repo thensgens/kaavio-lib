@@ -46,10 +46,12 @@ class Graph(BaseGraph):
             self.edge_attr.setdefault(new_edge, []).append(edge_attribute)
 
     def remove_node(self, node):
+        # remove node values from the adjacent list
         for u in self.get_nodes():
             for v in self.get_node_neighbours(u):
                 if v == node:
                     self.__node_adj_list[u].remove(v)
+        # remove node keys from the adjacent list
         if self.__node_adj_list[node] is not None:
             self.__node_adj_list.pop(node)
         if self.node_attr[node] is not None:
@@ -67,6 +69,9 @@ class Graph(BaseGraph):
     def get_edges(self):
         edges = [(u, v) for u in self.get_nodes() for v in self.get_node_neighbours(u)]
         return edges
+        #for u in self.get_nodes():
+            #for v in self.get_node_neighbours(u):
+                #yield (u, v)
 
     def __repr__(self):
         output = []
