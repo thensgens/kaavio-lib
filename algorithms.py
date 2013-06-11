@@ -679,7 +679,10 @@ def cycle_cancelling(graph):
         resid, back_edges = make_residual_graph_ssp(graph)
 
         # step 3 here
-        cycle_nodes = bellman_ford(resid, start=0, neg_cycle_detect=True)
+        for node in graph.get_nodes():
+            cycle_nodes = bellman_ford(resid, start=node, neg_cycle_detect=True)
+            if len(cycle_nodes) > 2:
+                break
 
         # if no negative cycle was found (empty list) -> STOP.
         if len(cycle_nodes) <= 2:
