@@ -382,29 +382,30 @@ def bellman_ford(graph, start, end=None, neg_cycle_detect=False):
     dist[start] = 0
     pred[start] = start
 
-    optimized_nodelist = iterative_breadth_first_search(graph, start)
+    #optimized_nodelist = iterative_breadth_first_search(graph, start)
 
     # optimized main computation loop & cycle detection
     updated = False
-    # main computation loop
     res_cycle_node = None
+
     for idx in range(graph.get_node_count()):
         updated = False
-        for u in optimized_nodelist:
-            cycle_node = None
+        potential_cycle_node = None
+        #for u in optimized_nodelist:
+        for u in graph.get_nodes():
             for v in graph.get_node_neighbours(u):
                 temp = float(graph.get_default_weights((u, v))[0])
                 if dist[u] + temp < dist[v]:
                     dist[v] = dist[u] + temp
                     pred[v] = u
                     updated = True
-                    cycle_node = v
+                    potential_cycle_node = v
 
         if not updated:
             break
 
         if idx + 1 == graph.get_node_count() and updated:
-            res_cycle_node = cycle_node
+            res_cycle_node = potential_cycle_node
             break
 
     if end is not None:
@@ -604,12 +605,14 @@ def bfs(graph, start, end):
 
 
 def cycle_cancelling(graph):
+    """
+        get_default_weights:
+            index = 0   =>      cost
+            index = 1   =>      capacity
+            index = 2   =>      flow
+    """
+    # the return value of this function (represents the minimal cost flow)
     result_flow_cost = 0.
-
-    for edge in graph.get_edges():
-        edge_weight_obj = graph.get_default_weights(edge)
-        # set the initial flow to 0.
-        edge_weight_obj[2] = 0.
 
     # create s* (super source) and t* (super target)
     #ss = graph.get_node_count()
