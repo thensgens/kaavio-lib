@@ -497,32 +497,39 @@ def make_residual_graph(graph, cap_index=0, flow_index=1):
     return resGraph
 
 
-def make_graph_from_residual(graph, path, gamma):
-    newGraph = Graph(directed=True)
-    for node in graph.get_nodes():
-        prop = NodeProperty(wgt=[graph.get_node_weights(node)[0]])
-        newGraph.add_nodes((node, prop))
-
-    originalGraphEdges = graph.get_edges()
-    pathEdges = path
-
-    for e in originalGraphEdges:
-        edge_weight = graph.get_default_weights(e)
+def update_graph_from_path_ssp(graph, path, gamma):
+    result = graph
+    for e in path:
         back_e = (e[1], e[0])
 
-        if e in pathEdges:
-            edge_weight[2] += gamma
-            atr = EdgeProperty(wgt=edge_weight)
-            newGraph.add_edges([e, atr])
-        elif back_e in pathEdges:
-            edge_weight[2] -= gamma
-            atr = EdgeProperty(wgt=edge_weight)
-            newGraph.add_edges([e, atr])
-        else:
-            atr = EdgeProperty(wgt=edge_weight)
-            newGraph.add_edges([e, atr])
+        if e in result.get_edges():
+            result.get_default_weights(e)[2] += gamma
+            result.get_node_weights(e[0])[1] += gamma
+            result.get_node_weights(e[1])[1] -= gamma
+        elif back_e in result.get_edges():
+            result.get_default_weights(back_e)[2] -= gamma
+            result.get_node_weights(back_e[0])[1] -= gamma
+            result.get_node_weights(back_e[1])[1] += gamma
 
-    return newGraph
+    return result
+
+
+def make_graph_from_residual(graph, path, gamma, edge_weight_index=2):
+
+    graph_edges = graph.get_edges()
+
+    for e in path:
+        back_e = (e[1], e[0])
+
+        if e in graph_edges:
+            edge_weight = graph.get_default_weights(e)
+            edge_weight[edge_weight_index] += gamma
+
+        elif back_e in graph_edges:
+            edge_weight = graph.get_default_weights(back_e)
+            edge_weight[edge_weight_index] -= gamma
+
+    return graph
 
 
 def edmonds_karp(graph, source, target, cap_index=0, flow_index=1):
@@ -543,7 +550,7 @@ def edmonds_karp(graph, source, target, cap_index=0, flow_index=1):
             index += 1
         gamma = min(edges, key=lambda edge: float(resid.get_default_weights(edge)[0]))
         gamma = float(resid.get_default_weights(gamma)[0])
-        work_graph = make_graph_from_residual(graph, edges, gamma)
+        work_graph = make_graph_from_residual(graph, edges, gamma, flow_index)
 
     flow = 0
     for node in work_graph.get_node_neighbours(source):
@@ -640,8 +647,11 @@ def cycle_cancelling(graph):
         resid, back_edges = make_residual_graph_ssp(graph)
 
         # step 3 here
-        for node in graph.get_nodes():
+        visited_nodes = []
+        for node in set(graph.get_nodes()) - set(visited_nodes):
             cycle_nodes = bellman_ford(resid, start=node, neg_cycle_detect=True)
+            for n in cycle_nodes:
+                visited_nodes.append(n)
             if len(cycle_nodes) > 2:
                 break
 
@@ -814,4 +824,50 @@ def update_graph_from_path_ssp(graph, path, gamma):
             result.get_node_weights(back_e[0])[1] -= gamma
             result.get_node_weights(back_e[1])[1] += gamma
 
+    return result
+
+
+def max_matching(graph):
+
+    #add supernodes
+    super_source = -1
+    super_target = -2
+
+    atr = NodeProperty(wgt=[0, 0])
+    graph.add_nodes((super_source, atr))
+    graph.add_nodes((super_target, atr))
+
+    #generate b-flow
+    added_edges = []
+    for node in graph.get_nodes()[:-2]:
+        b = graph.get_node_weights(node)[0]
+
+        if b > 0:
+            atr = EdgeProperty(wgt=[b, 0])
+            graph.add_edges([(super_source, node), atr])
+            added_edges.append((super_source, node))
+            graph.get_node_weights(super_source)[0] += b
+        if b < 0:
+            atr = EdgeProperty(wgt=[-b, 0])
+            graph.add_edges([(node, super_target), atr])
+            added_edges.append((node, super_target))
+            graph.get_node_weights(super_source)[0] -= b
+
+    #get maxflow
+    result_graph = edmonds_karp(graph, super_source, super_target, cap_index=0, flow_index=1)
+
+    graph.remove_node(super_source)
+    graph.remove_node(super_target)
+
+    for edge in added_edges:
+        graph.remove_edge(edge)
+
+    #get max matching
+    result = []
+    for edge in graph.get_edges():
+        edge_weight_obj = graph.get_default_weights(edge)
+        if edge_weight_obj[1] > 0:
+            result.append(edge)
+
+    print result
     return result

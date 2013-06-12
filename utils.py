@@ -87,6 +87,44 @@ def convert_node_edge_list(node_edge_list):
     return result_graph
 
 
+def convert_matching_list(node_edge_list):
+    """
+        Converts the input matching list
+        used for Matching_100_100.txt
+        node = nodeNumber, wgt = [Balance]
+        Balance > 0 = Source, < 0 = Target
+        Edge
+    """
+    result_graph = Graph(directed=True)
+    parsed_graph = [tuple(entry.strip(' \r\n').split('\t')) for entry in node_edge_list]
+    node_count = int(parsed_graph[0][0])
+    source_nodes = int(parsed_graph[1][0])
+
+    # populate the graph's node dict with node_balance
+    input_list = []
+    for i in range(node_count):
+        #wgt = Balance, Balance'
+        if i in range(source_nodes):
+            node_atr = NodeProperty(wgt=[1, 0])
+        else:
+            node_atr = NodeProperty(wgt=[-1, 0])
+
+        input_list.append((i, node_atr))
+    result_graph.add_nodes(*input_list)
+
+    # populate the graph's edge dict
+    for line in parsed_graph[2:]:
+        res_edge, attr = line, None
+
+        res_edge = (int(line[0]), int(line[1]))
+        #wgt = Cost, MaxCapacity, CurrentCapacity
+        attr = EdgeProperty(wgt=[1, 0, 0])
+
+        result_graph.add_edges([res_edge, attr])
+
+    return result_graph
+
+
 def make_graph_from_mst(mst, input_graph):
     """
         Input: (weight, (u, v))
