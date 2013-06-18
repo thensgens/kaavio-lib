@@ -828,7 +828,6 @@ def update_graph_from_path_ssp(graph, path, gamma):
 
 
 def max_matching(graph):
-
     #add supernodes
     super_source = -1
     super_target = -2
@@ -854,7 +853,7 @@ def max_matching(graph):
             graph.get_node_weights(super_source)[0] -= b
 
     #get maxflow
-    result_graph = edmonds_karp(graph, super_source, super_target, cap_index=0, flow_index=1)
+    result_graph = edmonds_karp(graph, super_source, super_target)
 
     graph.remove_node(super_source)
     graph.remove_node(super_target)
@@ -870,4 +869,6 @@ def max_matching(graph):
             result.append(edge)
 
     print result
+    print
+    print "Max. Matching: %d" % len(result)
     return result

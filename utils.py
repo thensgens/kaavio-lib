@@ -99,12 +99,13 @@ def convert_matching_list(node_edge_list):
     parsed_graph = [tuple(entry.strip(' \r\n').split('\t')) for entry in node_edge_list]
     node_count = int(parsed_graph[0][0])
     source_nodes = int(parsed_graph[1][0])
+    source_nodes = range(source_nodes)
 
     # populate the graph's node dict with node_balance
     input_list = []
     for i in range(node_count):
         #wgt = Balance, Balance'
-        if i in range(source_nodes):
+        if i in source_nodes:
             node_atr = NodeProperty(wgt=[1, 0])
         else:
             node_atr = NodeProperty(wgt=[-1, 0])
