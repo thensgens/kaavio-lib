@@ -655,7 +655,7 @@ def cycle_cancelling(graph):
             if len(cycle_nodes) > 2:
                 break
 
-        # if no negative cycle was found (empty list) -> STOP.
+        # if no negative cycle could be found -> STOP.
         if len(cycle_nodes) <= 2:
             result_flow_cost = get_flow_cost(graph)
             break
@@ -753,7 +753,6 @@ def successive_shortest_path(graph):
             if result_path:
                 break
             for target in valid_target:
-                #result_path = dijkstra(resid_graph, source, target)
                 result_path = bellman_ford(resid_graph, source, target)
                 if result_path:
                     break
@@ -845,12 +844,10 @@ def max_matching(graph):
             atr = EdgeProperty(wgt=[b, 0])
             graph.add_edges([(super_source, node), atr])
             added_edges.append((super_source, node))
-            graph.get_node_weights(super_source)[0] += b
         if b < 0:
             atr = EdgeProperty(wgt=[-b, 0])
             graph.add_edges([(node, super_target), atr])
             added_edges.append((node, super_target))
-            graph.get_node_weights(super_source)[0] -= b
 
     #get maxflow
     result_graph = edmonds_karp(graph, super_source, super_target)
