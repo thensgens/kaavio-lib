@@ -4,7 +4,7 @@ that can be performed on graphs.
 """
 
 from heap import PriorityQueue
-from utils import make_graph_from_mst
+from graph_utils import make_graph_from_mst
 from graph import Graph
 from basegraph import EdgeProperty, NodeProperty
 import itertools

@@ -2,7 +2,7 @@ import sys
 from graph import Graph
 from basegraph import EdgeProperty
 from algorithms import get_coherent_components_count, kruskal, prim, nearest_neighbor, double_tree, brute_force_itertools, start_bnb_bruteforce, dijkstra, bellman_ford, edmonds_karp, make_residual_graph, successive_shortest_path, cycle_cancelling, max_matching
-from utils import convert_matrix, convert_edge_list, convert_node_edge_list, convert_matching_list
+from graph_utils import convert_matrix, convert_edge_list, convert_node_edge_list, convert_matching_list
 from io import retrieve_information_web, retrieve_information_file
 
 
